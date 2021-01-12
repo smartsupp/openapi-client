@@ -22,7 +22,7 @@ export namespace CompileData {
 
 	export interface Property {
 		name: string
-		type: string
+		type: string | string[]
 		required?: boolean
 		nullable?: boolean
 		description?: string
@@ -40,21 +40,21 @@ export namespace CompileData {
 
 	export interface OperationParam {
 		name: string
-		type: string
+		type: string | string[]
 		description?: string
 	}
 
 	export interface OperationBody {
-		type: string
+		type: string | string[]
 		required?: boolean
 	}
 
 	export interface OperationQuery {
-		type: string
+		type: string | string[]
 		required?: boolean
 	}
 
 	export interface OperationResponse {
-		type: string
+		type: string | string[]
 	}
 }

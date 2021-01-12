@@ -6991,6 +6991,28 @@
                 "required": [
                     "ok"
                 ]
+            },
+            "batch_response": {
+                "title": "Batch Response",
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "number"
+                        },
+                        "status": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "ok",
+                        "status"
+                    ]
+                }
             }
         },
         "responses": {

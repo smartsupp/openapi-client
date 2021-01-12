@@ -7,6 +7,12 @@ export enum {{definition.name}} {
 	{{/each}}
 }
 {{/ifEquals}}
+{{#ifEquals definition.type 'type'}}
+export type {{definition.name}} =
+	{{#each definition.values as |value|}}
+	| {{#propType value}}{{/propType}}
+	{{/each}}
+{{/ifEquals}}
 {{#ifEquals definition.type 'interface'}}
 export interface {{definition.name}} {
 	{{#each definition.properties as |prop|}}

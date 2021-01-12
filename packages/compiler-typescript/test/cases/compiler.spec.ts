@@ -11,6 +11,14 @@ describe('Compiler', () => {
 		const result = compiler.compile({
 			name: 'Smartsupp Core Api',
 			definitions: [{
+				name: 'QueryValue',
+				type: 'type',
+				values: ['string', 'number', 'boolean'],
+			}, {
+				name: 'ConversationTypeEnum',
+				type: 'enum',
+				values: ['open', 'closed'],
+			}, {
 				name: 'Conversation',
 				type: 'interface',
 				properties: [{
@@ -19,12 +27,8 @@ describe('Compiler', () => {
 					required: true,
 				}, {
 					name: 'type',
-					type: 'string',
+					type: ['string', 'number', 'boolean'],
 				}],
-			}, {
-				name: 'ConversationTypeEnum',
-				type: 'enum',
-				values: ['open', 'closed'],
 			}],
 			apis: [{
 				name: 'conversations',
@@ -64,7 +68,7 @@ describe('Compiler', () => {
 						required: false,
 					},
 					response: {
-						type: 'SearchResponse'
+						type: ['SearchResponse', 'array:#Message']
 					},
 				}, {
 					params: [{ name: 'id', type: 'string' }],

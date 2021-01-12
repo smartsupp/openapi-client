@@ -13,7 +13,8 @@
     "@openapi-client/compiler-types": "*",
     "camel-case": "^4.1.2",
     "handlebars": "^4.7.6",
-    "pascal-case": "^3.1.2"
+    "pascal-case": "^3.1.2",
+    "prettier": "^2.2.1"
   },
   "scripts": {
     "clean": "../../node_modules/.bin/rimraf lib",

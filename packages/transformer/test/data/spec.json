@@ -46,6 +46,14 @@
             }
         },
         "schemas": {
+            "query_value": {
+                "title": "Query Value",
+                "oneOf": [
+                    { "type": "string" },
+                    { "type": "number" },
+                    { "type": "boolean" }
+                ]
+            },
             "channel": {
                 "title": "Channel",
                 "type": "object",
@@ -61,7 +69,24 @@
                         ]
                     },
                     "accountId": {
-                        "type": "string",
+                        "oneOf": [
+                            { "type": "string" },
+                            { "type": "number" },
+                            {
+                                "oneOf": [
+                                    { "type": "boolean" },
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "description": "Channel ID."
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        ],
                         "description": "Account Id"
                     },
                     "deletedAt": {

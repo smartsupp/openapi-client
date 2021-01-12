@@ -13,6 +13,11 @@ export namespace SmartsuppCoreAPI {
 		closed = 'closed',
 	}
 
+	export type QueryParam =
+		| string
+		| number
+		| boolean
+
 	// Nested apis
 
 	export namespace ConversationsAPI {

@@ -180,9 +180,6 @@ export class Transformer {
 			if ((schema as OpenAPIV3.ReferenceObject).$ref) {
 				continue
 			}
-			if ((schema as OpenAPIV3.SchemaObject).type === 'array') {
-				continue
-			}
 			const definitions: CompileData.Definition[] = []
 			const definition = this.transformDefinition(schema as OpenAPIV3.SchemaObject, '', definitions)
 			this.data.definitions.push(definition, ...definitions)
@@ -191,13 +188,17 @@ export class Transformer {
 
 	transformDefinition(schema: OpenAPIV3.SchemaObject, name: string = '', definitions: CompileData.Definition[]): CompileData.Definition {
 		const definition: CompileData.Definition = {
-			type: this.resolveDefinitionType(schema),
+			type: null,
 			name: name || schema.title,
 		}
 		if (schema.type === 'object') {
+			definition.type = 'interface'
 			definition.properties = this.transformProperties(schema, definition.name, definitions)
+
 		} else if (schema.type === 'string' && schema.enum) {
+			definition.type = 'enum'
 			definition.values = schema.enum
+
 		} else if (schema.allOf) {
 			const schemas = schema.allOf.map((childSchema) => {
 				const schema = derefJsonSchema({
@@ -214,10 +215,26 @@ export class Transformer {
 			})
 			definition.type = 'interface'
 			definition.properties = this.transformProperties(mergedSchema, definition.name, definitions)
+
 		} else if (schema.oneOf) {
-			throw new Error('oneOf not yet supported on definition root level')
+			definition.type = 'type'
+			definition.values = schema.oneOf.map((subSchema) => {
+				return this.transformPropertyType(subSchema, definition.name, definitions)
+			}).flat()
+
 		} else if (schema.anyOf) {
-			throw new Error('anyOf not yet supported on definition root level')
+			definition.type = 'type'
+			definition.values = schema.oneOf.map((subSchema) => {
+				return this.transformPropertyType(subSchema, definition.name, definitions)
+			}).flat()
+
+		} else if (schema.type === 'array') {
+			definition.type = 'type'
+			definition.values = [this.transformPropertyType(schema, definition.name + 'Item', definitions)]
+		}
+
+		if (definition.type === null) {
+			throw new Error('Schema was unable to transform')
 		}
 		return definition
 	}
@@ -232,16 +249,6 @@ export class Transformer {
 			properties.push(prop)
 		}
 		return properties
-	}
-
-	resolveDefinitionType(schema: OpenAPIV3.SchemaObject): CompileData.DefinitionType {
-		if (schema.type === 'object') {
-			return 'interface'
-		} else if (schema.type === 'string' && schema.enum) {
-			return 'enum'
-		} else {
-			return 'type'
-		}
 	}
 
 	transformProperty(name: string, val: any, defName: string, definitions: CompileData.Definition[]): CompileData.Property {
@@ -273,7 +280,7 @@ export class Transformer {
 		}
 	}
 
-	transformPropertyType(val, defName: string, definitions: CompileData.Definition[]): string {
+	transformPropertyType(val, defName: string, definitions: CompileData.Definition[]): string | string[] {
 		if (val.$ref) {
 			return this.transformPropertyTypeFromRef(val, defName)
 		} else {
@@ -290,7 +297,7 @@ export class Transformer {
 		}
 	}
 
-	transformPropertyTypeFromSchema(schema: OpenAPIV3.SchemaObject, defName: string, definitions: CompileData.Definition[]): string {
+	transformPropertyTypeFromSchema(schema: OpenAPIV3.SchemaObject, defName: string, definitions: CompileData.Definition[]): string | string[] {
 		if (schema.type === 'object') {
 			const definition = this.transformDefinition(schema, defName, definitions)
 			definitions.push(definition)
@@ -298,7 +305,11 @@ export class Transformer {
 
 		} else if (schema.type === 'array') {
 			const type = this.transformPropertyType(schema.items, defName, definitions)
-			return `array:${type}`
+			if (Array.isArray(type)) {
+				return type.map(t => `array:${t}`)
+			} else {
+				return `array:${type}`
+			}
 
 		} else if (schema.type) {
 			return schema.type
@@ -312,11 +323,13 @@ export class Transformer {
 				return definition.name
 			}
 		} else if (schema.anyOf) {
-			return 'any'
-			// throw new Error(`Unable to process parameter in ${defName}. anyOf not supported`)
+			return schema.oneOf.map((subSchema) => {
+				return this.transformPropertyType(subSchema, defName, definitions)
+			}).flat()
 		} else if (schema.oneOf) {
-			return 'any'
-			// throw new Error(`Unable to process parameter in ${defName}. oneOf not supported`)
+			return schema.oneOf.map((subSchema) => {
+				return this.transformPropertyType(subSchema, defName, definitions)
+			}).flat()
 		} else {
 			throw new Error(`Unable to process parameter in ${defName}. Schema not supported`)
 		}

@@ -1,14 +1,27 @@
 import { CompileData } from '@openapi-client/compiler-types'
+import { camelCase } from 'camel-case'
 import * as fs from 'fs'
 import * as Handlebars from 'handlebars'
 import { pascalCase } from 'pascal-case'
-import { camelCase } from 'camel-case'
+import prettier from "prettier"
 
 const TEMPLATES_DIR = __dirname + '/../templates'
+
+const PrettierOptions = {
+	parser: 'typescript',
+	singleQuote: true,
+	printWidth: 200,
+	useTabs: true,
+}
 
 export interface CompiledFile {
 	path: string
 	data: string
+}
+
+interface FormatTypeContext {
+	namespace: string
+	apiNamespace: string
 }
 
 export class Compiler {
@@ -28,20 +41,20 @@ export class Compiler {
 		const result = []
 		result.push({
 			path: 'types.ts',
-			data: this.typesTemplate({
+			data: this.pretify(this.typesTemplate({
 				namespace: pascalCase(data.name),
 				...data,
-			}),
+			})),
 		})
 		for (const api of data.apis) {
 			result.push({
 				path: `apis/${this.formatFileName(api.name)}.ts`,
-				data: this.apiTemplate({
+				data: this.pretify(this.apiTemplate({
 					namespace: pascalCase(data.name),
 					api,
 					apiClass: pascalCase(api.name) + 'Client',
 					apiNamespace: pascalCase(api.name),
-				}),
+				})),
 			})
 		}
 		return result
@@ -50,13 +63,19 @@ export class Compiler {
 	formatFileName(name: string): string {
 		return name[0].toLowerCase() + name.substring(1)
 	}
+
+	pretify(output: string): string {
+		return prettier.format(output, PrettierOptions)
+			.replace(/^\s*\n/gm, '')
+			.replace(/^(\t*export\s(namespace|interface|class)(.*))$/gm, "\n$1")
+	}
 }
 
 // Handlebars helpers
 
-Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
-	return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
-});
+Handlebars.registerHelper('ifEquals', function (arg1, arg2, options) {
+	return (arg1 == arg2) ? options.fn(this) : options.inverse(this)
+})
 
 Handlebars.registerHelper('pascalCase', (options) => {
 	return pascalCase(options.fn(this))
@@ -67,7 +86,7 @@ Handlebars.registerHelper('camelCase', (options) => {
 })
 
 Handlebars.registerHelper('propType', (context) => {
-	return formatType(context).replace(/^#/, '')
+	return expandType(context)
 })
 
 Handlebars.registerHelper('enumName', (context: string) => {
@@ -81,21 +100,13 @@ Handlebars.registerHelper('enumName', (context: string) => {
 Handlebars.registerHelper('opParams', (context: CompileData.Operation, options) => {
 	const ret = []
 	for (const param of context.params) {
-		ret.push(`${param.name}: ${param.type}`)
+		ret.push(`${param.name}: ${expandType(param.type, options.data.root)}`)
 	}
 	if (context.body) {
-		if (context.body.type[0] === '#') {
-			ret.push(`body: ${options.data.root.namespace}.${context.body.type.slice(1)}`)
-		} else {
-			ret.push(`body: ${options.data.root.apiNamespace}.${context.body.type}`)
-		}
+		ret.push(`body: ${expandType(context.body.type, options.data.root)}`)
 	}
 	if (context.query) {
-		if (context.query.type[0] === '#') {
-			ret.push(`query: ${options.data.root.namespace}.${context.query.type.slice(1)}`)
-		} else {
-			ret.push(`query: ${options.data.root.apiNamespace}.${context.query.type}`)
-		}
+		ret.push(`query: ${expandType(context.query.type, options.data.root)}`)
 	}
 	ret.push('options?')
 	return ret.join(', ')
@@ -113,20 +124,43 @@ Handlebars.registerHelper('opArgs', (context: CompileData.Operation) => {
 
 Handlebars.registerHelper('opResponse', (context: CompileData.Operation, options) => {
 	if (context.response) {
-		const type = formatType(context.response.type)
-		if (type[0] === '#') {
-			return `${options.data.root.namespace}.${type.slice(1)}`
-		} else {
-			return `${options.data.root.apiNamespace}.${type}`
-		}
+		return expandType(context.response.type, options.data.root)
 	} else {
 		return 'void'
 	}
 })
 
-function formatType(val: string): string {
-	while (val.includes('array:')) {
-		val = val.replace(/^array:(.*)$/, '$1[]')
+function expandType(type: string | string[], data?: FormatTypeContext): string {
+	const types = Array.isArray(type) ? type : [type]
+	return types.map((type) => {
+		type = expandTypeArray(type)
+		if (data && !isTypeNatural(type)) {
+			return expandTypeNamespace(type, data)
+		} else {
+			return expandTypeSimple(type)
+		}
+	}).join(' | ')
+}
+
+function expandTypeArray(type: string): string {
+	while (type.includes('array:')) {
+		type = type.replace(/^array:(.*)$/, '$1[]')
 	}
-	return val
+	return type
+}
+
+function expandTypeNamespace(type: string, data: FormatTypeContext): string {
+	if (type[0] === '#') {
+		return `${data.namespace}.${type.slice(1)}`
+	} else {
+		return `${data.apiNamespace}.${type}`
+	}
+}
+
+function expandTypeSimple(type: string): string {
+	return type[0] === '#' ? type.slice(1) : type
+}
+
+function isTypeNatural(type: string): boolean {
+	return ['string', 'boolean', 'number', 'any', 'null'].includes(type)
 }
