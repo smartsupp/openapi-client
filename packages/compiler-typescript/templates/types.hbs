@@ -1,0 +1,29 @@
+{{#*inline "definitions"}}
+{{#each definitions as |definition|}}
+{{#ifEquals definition.type 'enum'}}
+export enum {{definition.name}} {
+	{{#each definition.values as |value|}}
+	{{#enumName value}}{{/enumName}} = '{{value}}',
+	{{/each}}
+}
+{{/ifEquals}}
+{{#ifEquals definition.type 'interface'}}
+export interface {{definition.name}} {
+	{{#each definition.properties as |prop|}}
+	{{#if prop.description}}/** {{prop.description}} */{{/if}}
+	{{prop.name}}{{#unless prop.required}}?{{/unless}}: {{#propType prop.type}}{{/propType}}
+	{{/each}}
+}
+{{/ifEquals}}
+{{/each}}
+{{/inline}}
+
+export namespace {{namespace}} {
+	{{> definitions definitions=definitions}}
+
+	{{#each apis as |api|}}
+	export namespace {{#pascalCase}}{{api.name}}{{/pascalCase}} {
+		{{> definitions definitions=api.definitions}}
+	}
+	{{/each}}
+}

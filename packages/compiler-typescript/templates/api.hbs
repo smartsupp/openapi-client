@@ -1,0 +1,15 @@
+import { IAdapter } from '../adapter'
+import { {{namespace}} } from '../types'
+import {{apiNamespace}} = {{namespace}}.{{apiNamespace}}
+
+export class {{apiClass}} {
+	constructor(
+		private adapter: IAdapter
+	) {
+	}
+	{{#each api.operations as |op|}}
+	{{#camelCase}}{{op.name}}{{/camelCase}}({{#opParams op}}{{/opParams}}): Promise<{{#opResponse op}}{{/opResponse}}> {
+		return this.adapter.request({{#opArgs op}}{{/opArgs}})
+	}
+	{{/each}}
+}

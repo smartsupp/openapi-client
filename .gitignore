@@ -1,0 +1,10 @@
+.DS_Store
+.idea
+.npmrc
+node_modules
+npm-debug.log
+/eb-versions
+/lerna-debug.log
+lib
+coverage
+test/out

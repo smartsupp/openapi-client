@@ -1,0 +1,20 @@
+{
+  "packages": [
+    "packages/*"
+  ],
+  "version": "independent",
+  "command": {
+    "version": {
+      "allowBranch": ["master"]
+    },
+    "publish": {
+      "allowBranch": ["master"],
+      "registry": "https://npm.pkg.github.com"
+    }
+  },
+  "ignoreChanges": [
+    "**/test/**",
+    "**/*.md",
+    "**/*.js"
+  ]
+}

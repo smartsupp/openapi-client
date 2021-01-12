@@ -1,0 +1,282 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "Smartsupp Channels API",
+        "version": "1.0.0"
+    },
+    "tags": [],
+    "paths": {
+        "/channels": {
+            "get": {
+                "operationId": "list",
+                "summary": "List channels",
+                "tags": [
+                    "channels"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/channel"
+                                    }
+                                },
+                                "examples": {
+                                    "channels_list": {
+                                        "$ref": "#/components/examples/channels_list"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "parameters": {},
+        "securitySchemes": {
+            "cookieAuth": {
+                "type": "apiKey",
+                "in": "cookie",
+                "name": "jwt_access_token"
+            }
+        },
+        "schemas": {
+            "channel": {
+                "title": "Channel",
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Channel ID."
+                    },
+                    "type": {
+                        "nullable": true,
+                        "allOf": [
+                            { "$ref": "#/components/schemas/channel_type_enum" }
+                        ]
+                    },
+                    "accountId": {
+                        "type": "string",
+                        "description": "Account Id"
+                    },
+                    "deletedAt": {
+                        "nullable": true,
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "info": {
+                        "type": "object",
+                        "properties": {
+                            "pageId": {
+                                "type": "string",
+                                "description": "Facebook page ID."
+                            },
+                            "pageName": {
+                                "type": "string",
+                                "description": "Facebook page name."
+                            }
+                        },
+                        "required": [
+                            "pageId",
+                            "pageName"
+                        ]
+                    },
+                    "facebook": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "pageId": {
+                                    "type": "string",
+                                    "description": "Facebook page ID."
+                                },
+                                "pageName": {
+                                    "type": "string",
+                                    "description": "Facebook page name."
+                                }
+                            },
+                            "required": [
+                                "pageId",
+                                "pageName"
+                            ]
+                        }
+                    }
+                }
+            },
+            "channel_info": {
+                "title": "Channel Info",
+                "type": "object",
+                "properties": {
+                    "pageId": {
+                        "type": "string",
+                        "description": "Facebook page ID."
+                    },
+                    "pageName": {
+                        "type": "string",
+                        "description": "Facebook page name."
+                    }
+                }
+            },
+            "viber_info": {
+                "title": "Viber Info",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/channel_info"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "viberId": {
+                                "type": "string",
+                                "description": "Viber channel ID.",
+                                "nullable": true
+                            }
+                        },
+                        "required": [
+                            "viberId"
+                        ]
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "viberName": {
+                                "type": "string",
+                                "description": "Viber channel name."
+                            }
+                        },
+                        "required": [
+                            "viberName"
+                        ]
+                    }
+                ]
+            },
+            "channel_type_enum": {
+                "title": "Channel type enum",
+                "type": "string",
+                "enum": ["facebook", "messenger"]
+            }
+        },
+        "responses": {
+            "suc_ok": {
+                "description": "OK response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/response_ok"
+                        },
+                        "example": {
+                            "ok": true
+                        }
+                    }
+                }
+            },
+            "err_general": {
+                "description": "General error response. See documentation for all possible codes and messages.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/error_payload"
+                        },
+                        "examples": {
+                            "error": {
+                                "summary": "General Error",
+                                "value": {
+                                    "code": "<error_code>",
+                                    "message": "<error_message>"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "err_bad_request": {
+                "description": "Bad request or invalid parameters",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/error_payload"
+                        },
+                        "example": {
+                            "code": "bad_request",
+                            "message": "Invalid parameters",
+                            "errors": [
+                                {
+                                    "path": "type",
+                                    "code": "enum.openapi.requestValidation",
+                                    "message": "should be equal to one of the allowed values",
+                                    "location": "body"
+                                },
+                                {
+                                    "path": "content.data",
+                                    "code": "required.openapi.requestValidation",
+                                    "message": "should have required property 'data'",
+                                    "location": "body"
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "err_not_found": {
+                "description": "Resource was not found",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/error_payload"
+                        },
+                        "example": {
+                            "code": "not_found",
+                            "message": "Resource not found"
+                        }
+                    }
+                }
+            },
+            "err_unauthorized": {
+                "description": "Unauthorized request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/error_payload"
+                        },
+                        "example": {
+                            "code": "invalid_code",
+                            "message": "Value passed for code was invalid."
+                        }
+                    }
+                }
+            }
+        },
+        "examples": {
+            "channels_list": {
+                "summary": "Channels List",
+                "value": [
+                    {
+                        "id": "cc1313123",
+                        "type": "facebook_messenger",
+                        "accountId": "1234",
+                        "deletedAt": null,
+                        "facebook": {
+                            "pageId": "213123",
+                            "pageName": "Example FB Page"
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "servers": [
+        {
+            "url": "http://app.smartsupp.loc/rest/channels"
+        }
+    ],
+    "security": [
+        {
+            "cookieAuth": []
+        }
+    ]
+}

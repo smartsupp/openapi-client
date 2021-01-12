@@ -1,0 +1,30 @@
+{
+  "name": "@openapi-client/transformer",
+  "version": "1.0.0",
+  "description": "Transform OpenAPI specification to data object required by compilers",
+  "license": "ISC",
+  "repository": "https://github.com/smartsupp/openapi-client.git",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
+  "main": "./lib/index.js",
+  "typings": "./lib/index.d.ts",
+  "dependencies": {
+    "@openapi-client/compiler-types": "*",
+    "json-schema-deref-sync": "^0.14.0",
+    "json-schema-merge-allof": "^0.7.0",
+    "openapi-types": "^7.2.2",
+    "pascal-case": "^3.1.2"
+  },
+  "scripts": {
+    "clean": "../../node_modules/.bin/rimraf lib",
+    "build": "../../node_modules/.bin/run-s clean build:ts",
+    "build:ts": "../../node_modules/.bin/tsc -p tsconfig.json",
+    "build:watch": "../../node_modules/.bin/tsc -p tsconfig.json -w",
+    "lint": "../../node_modules/.bin/eslint ./src/**/*.ts",
+    "fix": "../../node_modules/.bin/eslint --fix ./src/**/*.ts",
+    "test": "../../node_modules/.bin/jest",
+    "prepublishOnly": "npm run build",
+    "publish:github": "npm publish"
+  }
+}
