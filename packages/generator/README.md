@@ -1,3 +1,3 @@
-# @openapi-client/compiler-typescript
+# @openapi-client/compiler-generator
 
-Generate typescript client
+Generate clients

@@ -1,3 +1,3 @@
-# @openapi-client/compiler-typescript
+# @openapi-client/compiler-types
 
-Generate typescript client
+Compiler shared types
