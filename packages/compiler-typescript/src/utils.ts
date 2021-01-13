@@ -22,7 +22,7 @@ export function expandType(type: string | string[], data?: FormatTypeContext): s
 	const types = Array.isArray(type) ? type : [type]
 	return types.map((type) => {
 		type = expandTypeArray(type)
-		if (data && !isTypeNatural(type)) {
+		if (data && !isTypeNatural(type.replace(/\[\]/g, ''))) {
 			return expandTypeNamespace(type, data)
 		} else {
 			return expandTypeSimple(type)

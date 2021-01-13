@@ -18,6 +18,10 @@ export namespace SmartsuppCoreAPI {
 		| number
 		| boolean
 
+	export interface QuerySearch {
+		[keyof: string]: QueryParam
+	}
+
 	// Nested apis
 
 	export namespace ConversationsAPI {

@@ -164,7 +164,7 @@ export class Transformer {
 		if ((schema as OpenAPIV3.ReferenceObject).$ref) {
 			return '#' + this.derefSchema(schema).title
 		} else {
-			return this.transformPropertyTypeFromSchema(schema as OpenAPIV3.SchemaObject, name, definitions)
+			return this.transformTypeFromSchema(schema as OpenAPIV3.SchemaObject, name, definitions)
 		}
 	}
 
@@ -189,11 +189,20 @@ export class Transformer {
 	transformDefinition(schema: OpenAPIV3.SchemaObject, name: string = '', definitions: CompileData.Definition[]): CompileData.Definition {
 		const definition: CompileData.Definition = {
 			type: null,
-			name: name || schema.title,
+			name: pascalCase(schema.title || name),
 		}
+		if (!definition.name) {
+			throw new Error('Definition name was unable to generate. Must be passed manually')
+		}
+
 		if (schema.type === 'object') {
 			definition.type = 'interface'
 			definition.properties = this.transformProperties(schema, definition.name, definitions)
+			if (schema.additionalProperties === true) {
+				definition.additionalType = 'any'
+			} else if (schema.additionalProperties) {
+				definition.additionalType = this.transformType(schema.additionalProperties, definition.name + 'Props', definitions)
+			}
 
 		} else if (schema.type === 'string' && schema.enum) {
 			definition.type = 'enum'
@@ -213,24 +222,24 @@ export class Transformer {
 					example: (values) => values[0],
 				},
 			})
-			definition.type = 'interface'
-			definition.properties = this.transformProperties(mergedSchema, definition.name, definitions)
+			mergedSchema.title = schema.title || mergedSchema.title
+			return this.transformDefinition(mergedSchema, definition.name, definitions)
 
 		} else if (schema.oneOf) {
 			definition.type = 'type'
 			definition.values = schema.oneOf.map((subSchema) => {
-				return this.transformPropertyType(subSchema, definition.name, definitions)
+				return this.transformType(subSchema, definition.name, definitions)
 			}).flat()
 
 		} else if (schema.anyOf) {
 			definition.type = 'type'
 			definition.values = schema.anyOf.map((subSchema) => {
-				return this.transformPropertyType(subSchema, definition.name, definitions)
+				return this.transformType(subSchema, definition.name, definitions)
 			}).flat()
 
 		} else if (schema.type === 'array') {
 			definition.type = 'type'
-			definition.values = [this.transformPropertyType(schema, definition.name + 'Item', definitions)]
+			definition.values = [this.transformType(schema, definition.name + 'Item', definitions)]
 		}
 
 		if (definition.type === null) {
@@ -273,22 +282,22 @@ export class Transformer {
 	transformPropertyFromSchema(name: string, schema: OpenAPIV3.SchemaObject, defName: string, definitions: CompileData.Definition[]): CompileData.Property {
 		return {
 			name,
-			type: this.transformPropertyType(schema, defName + pascalCase(name), definitions),
+			type: this.transformType(schema, defName + pascalCase(name), definitions),
 			required: false,
 			nullable: schema.nullable || false,
 			description: schema.description || '',
 		}
 	}
 
-	transformPropertyType(val, defName: string, definitions: CompileData.Definition[]): string | string[] {
+	transformType(val, defName: string, definitions: CompileData.Definition[]): string | string[] {
 		if (val.$ref) {
-			return this.transformPropertyTypeFromRef(val, defName)
+			return this.transformTypeFromRef(val, defName)
 		} else {
-			return this.transformPropertyTypeFromSchema(val, defName, definitions)
+			return this.transformTypeFromSchema(val, defName, definitions)
 		}
 	}
 
-	transformPropertyTypeFromRef(schema: OpenAPIV3.ReferenceObject, defName: string): string {
+	transformTypeFromRef(schema: OpenAPIV3.ReferenceObject, defName: string): string {
 		const type = this.derefSchema(schema).title
 		if (defName && !type.includes(defName)) {
 			return '#' + type
@@ -297,14 +306,14 @@ export class Transformer {
 		}
 	}
 
-	transformPropertyTypeFromSchema(schema: OpenAPIV3.SchemaObject, defName: string, definitions: CompileData.Definition[]): string | string[] {
+	transformTypeFromSchema(schema: OpenAPIV3.SchemaObject, defName: string, definitions: CompileData.Definition[]): string | string[] {
 		if (schema.type === 'object') {
 			const definition = this.transformDefinition(schema, defName, definitions)
 			definitions.push(definition)
 			return definition.name
 
 		} else if (schema.type === 'array') {
-			const type = this.transformPropertyType(schema.items, defName, definitions)
+			const type = this.transformType(schema.items, defName, definitions)
 			if (Array.isArray(type)) {
 				return type.map(t => `array:${t}`)
 			} else {
@@ -324,11 +333,11 @@ export class Transformer {
 			}
 		} else if (schema.anyOf) {
 			return schema.anyOf.map((subSchema) => {
-				return this.transformPropertyType(subSchema, defName, definitions)
+				return this.transformType(subSchema, defName, definitions)
 			}).flat()
 		} else if (schema.oneOf) {
 			return schema.oneOf.map((subSchema) => {
-				return this.transformPropertyType(subSchema, defName, definitions)
+				return this.transformType(subSchema, defName, definitions)
 			}).flat()
 		} else {
 			throw new Error(`Unable to process parameter in ${defName}. Schema not supported`)

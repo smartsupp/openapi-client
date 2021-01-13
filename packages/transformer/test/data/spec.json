@@ -46,14 +46,6 @@
             }
         },
         "schemas": {
-            "query_value": {
-                "title": "Query Value",
-                "oneOf": [
-                    { "type": "string" },
-                    { "type": "number" },
-                    { "type": "boolean" }
-                ]
-            },
             "channel": {
                 "title": "Channel",
                 "type": "object",
@@ -88,6 +80,48 @@
                             }
                         ],
                         "description": "Account Id"
+                    },
+                    "content": {
+                        "title": "Content",
+                        "oneOf": [
+                            {
+                                "title": "ContentPage",
+                                "type": "object",
+                                "properties": {
+                                    "pageId": {
+                                        "type": "string",
+                                        "description": "Facebook page ID."
+                                    }
+                                },
+                                "required": [
+                                    "pageId"
+                                ]
+                            },
+                            {
+                                "type": "object",
+                                "title": "ContentData",
+                                "additionalProperties": {
+                                    "oneOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "title": "ContentExtra",
+                                            "type": "object",
+                                            "properties": {
+                                                "pageCode": {
+                                                    "type": "string",
+                                                    "description": "Facebook page ID."
+                                                }
+                                            },
+                                            "required": [
+                                                "pageCode"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
                     },
                     "deletedAt": {
                         "nullable": true,

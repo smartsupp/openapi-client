@@ -2870,8 +2870,10 @@
                                     "items": {
                                         "oneOf": [
                                             {
+                                                "title": "MetricsItemSet",
                                                 "type": "object",
                                                 "additionalProperties": {
+                                                    "title": "MetricsItemSetQuery",
                                                     "type": "object",
                                                     "properties": {
                                                         "name": {
@@ -2886,6 +2888,7 @@
                                             {
                                                 "type": "array",
                                                 "items": {
+                                                    "title": "MetricsItemListQuery",
                                                     "type": "object",
                                                     "properties": {
                                                         "name": {

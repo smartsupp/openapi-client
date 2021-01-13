@@ -1,5 +1,5 @@
 import { IAdapter, {{namespace}} } from '../types'
-import {{apiNamespace}} = {{namespace}}.{{apiNamespace}}
+{{#if api.definitions}}import {{apiNamespace}} = {{namespace}}.{{apiNamespace}}{{/if}}
 
 export class {{apiClass}} {
 	constructor(

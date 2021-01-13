@@ -19,6 +19,10 @@ describe('Compiler', () => {
 				type: 'enum',
 				values: ['open', 'closed'],
 			}, {
+				name: 'ContentFilters',
+				type: 'interface',
+				additionalType: 'QueryValue',
+			}, {
 				name: 'Conversation',
 				type: 'interface',
 				properties: [{
@@ -83,7 +87,7 @@ describe('Compiler', () => {
 				}],
 			}],
 		})
-		expect(result).toHaveLength(2)
+		expect(result).toHaveLength(4)
 		console.log(result[0]['data']) // todo: test output
 		console.log(result[1]['data']) // todo: test output
 	})
