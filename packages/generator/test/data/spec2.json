@@ -2429,7 +2429,10 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/batch_delete_request"
+                                "type": "array",
+                                "items": {
+                                    "type": "number"
+                                }
                             }
                         }
                     }
@@ -2440,7 +2443,10 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/batch_delete_response"
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/batch_delete_item"
+                                    }
                                 }
                             }
                         }
@@ -3025,10 +3031,20 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "object",
-                                    "additionalProperties": {
-                                        "$ref": "#/components/schemas/metric"
-                                    }
+                                    "oneOf": [
+                                        {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "$ref": "#/components/schemas/metric"
+                                            }
+                                        },
+                                        {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/metric"
+                                            }
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -3689,7 +3705,10 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/batch_delete_request"
+                                "type": "array",
+                                "items": {
+                                    "type": "number"
+                                }
                             }
                         }
                     }
@@ -3700,7 +3719,10 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/batch_delete_response"
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/batch_delete_item"
+                                    }
                                 }
                             }
                         }
@@ -4055,7 +4077,10 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/batch_delete_request"
+                                "type": "array",
+                                "items": {
+                                    "type": "number"
+                                }
                             }
                         }
                     }
@@ -4066,7 +4091,10 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/batch_delete_response"
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/batch_delete_item"
+                                    }
                                 }
                             }
                         }
@@ -5722,8 +5750,15 @@
                             },
                             "data": {
                                 "nullable": true,
-                                "type": "object",
-                                "additionalProperties": true,
+                                "anyOf": [
+                                    {
+                                        "$ref": "#/components/schemas/attachment"
+                                    },
+                                    {
+                                        "type": "object",
+                                        "additionalProperties": true
+                                    }
+                                ],
                                 "example": null
                             }
                         }
@@ -6797,51 +6832,36 @@
                     "location"
                 ]
             },
-            "batch_delete_request": {
-                "title": "Typical Batch Delete Request",
+            "batch_delete_item": {
+                "title": "Batch Delete Item",
                 "type": "object",
                 "properties": {
-                    "ids": {
-                        "type": "array",
-                        "items": {
-                            "type": "number"
-                        }
-                    }
-                }
-            },
-            "batch_delete_response": {
-                "title": "Typical Batch Delete Response",
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "id": {
-                            "type": "number"
-                        },
-                        "status": {
-                            "type": "number"
-                        },
-                        "error": {
-                            "type": "object",
-                            "properties": {
-                                "code": {
-                                    "type": "string"
-                                },
-                                "message": {
-                                    "type": "string"
-                                }
-                            },
-                            "required": [
-                                "code",
-                                "message"
-                            ]
-                        }
+                    "id": {
+                        "type": "number"
                     },
-                    "required": [
-                        "id",
-                        "status"
-                    ]
-                }
+                    "status": {
+                        "type": "number"
+                    },
+                    "error": {
+                        "type": "object",
+                        "properties": {
+                            "code": {
+                                "type": "string"
+                            },
+                            "message": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "code",
+                            "message"
+                        ]
+                    }
+                },
+                "required": [
+                    "id",
+                    "status"
+                ]
             },
             "account_history_enum": {
                 "title": "Account History Enum",
@@ -6991,28 +7011,6 @@
                 "required": [
                     "ok"
                 ]
-            },
-            "batch_response": {
-                "title": "Batch Response",
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "id": {
-                            "type": "number"
-                        },
-                        "status": {
-                            "type": "number"
-                        },
-                        "message": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "ok",
-                        "status"
-                    ]
-                }
             }
         },
         "responses": {

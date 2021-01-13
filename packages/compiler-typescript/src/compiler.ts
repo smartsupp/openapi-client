@@ -1,36 +1,32 @@
 import { CompileData } from '@openapi-client/compiler-types'
-import { camelCase } from 'camel-case'
 import * as fs from 'fs'
 import * as Handlebars from 'handlebars'
 import { pascalCase } from 'pascal-case'
-import prettier from "prettier"
+import helpers from './helpers'
+import { lcFirst, pretify } from './utils'
 
 const TEMPLATES_DIR = __dirname + '/../templates'
-
-const PrettierOptions = {
-	parser: 'typescript',
-	singleQuote: true,
-	printWidth: 200,
-	useTabs: true,
-}
 
 export interface CompiledFile {
 	path: string
 	data: string
 }
 
-interface FormatTypeContext {
-	namespace: string
-	apiNamespace: string
+for (const name in helpers) {
+	Handlebars.registerHelper(name, helpers[name])
 }
 
 export class Compiler {
 	private readonly apiTemplate: Handlebars.TemplateDelegate
 	private readonly typesTemplate: Handlebars.TemplateDelegate
+	private readonly clientTemplate: Handlebars.TemplateDelegate
+	private readonly indexTemplate: Handlebars.TemplateDelegate
 
 	constructor() {
 		this.apiTemplate = Handlebars.compile(this.getTemplate('api'))
 		this.typesTemplate = Handlebars.compile(this.getTemplate('types'))
+		this.clientTemplate = Handlebars.compile(this.getTemplate('client'))
+		this.indexTemplate = Handlebars.compile(this.getTemplate('index'))
 	}
 
 	getTemplate(name: string): string {
@@ -39,128 +35,58 @@ export class Compiler {
 
 	compile(data: CompileData.Data): CompiledFile[] {
 		const result = []
-		result.push({
-			path: 'types.ts',
-			data: this.pretify(this.typesTemplate({
-				namespace: pascalCase(data.name),
-				...data,
-			})),
-		})
+		result.push(this.compileTypes(data))
 		for (const api of data.apis) {
-			result.push({
-				path: `apis/${this.formatFileName(api.name)}.ts`,
-				data: this.pretify(this.apiTemplate({
-					namespace: pascalCase(data.name),
-					api,
-					apiClass: pascalCase(api.name) + 'Client',
-					apiNamespace: pascalCase(api.name),
-				})),
-			})
+			result.push(this.compileApi(data, api))
 		}
+		result.push(this.compileClient(data))
+		result.push(this.compileIndex(data))
 		return result
 	}
 
-	formatFileName(name: string): string {
-		return name[0].toLowerCase() + name.substring(1)
-	}
-
-	pretify(output: string): string {
-		return prettier.format(output, PrettierOptions)
-			.replace(/^\s*\n/gm, '')
-			.replace(/^(\t*export\s(namespace|interface|class)(.*))$/gm, "\n$1")
-	}
-}
-
-// Handlebars helpers
-
-Handlebars.registerHelper('ifEquals', function (arg1, arg2, options) {
-	return (arg1 == arg2) ? options.fn(this) : options.inverse(this)
-})
-
-Handlebars.registerHelper('pascalCase', (options) => {
-	return pascalCase(options.fn(this))
-})
-
-Handlebars.registerHelper('camelCase', (options) => {
-	return camelCase(options.fn(this))
-})
-
-Handlebars.registerHelper('propType', (context) => {
-	return expandType(context)
-})
-
-Handlebars.registerHelper('enumName', (context: string) => {
-	let enumName = pascalCase(`${context}`)
-	if (enumName.match(/^[0-9].*/)) {
-		enumName = '_' + enumName
-	}
-	return enumName
-})
-
-Handlebars.registerHelper('opParams', (context: CompileData.Operation, options) => {
-	const ret = []
-	for (const param of context.params) {
-		ret.push(`${param.name}: ${expandType(param.type, options.data.root)}`)
-	}
-	if (context.body) {
-		ret.push(`body: ${expandType(context.body.type, options.data.root)}`)
-	}
-	if (context.query) {
-		ret.push(`query: ${expandType(context.query.type, options.data.root)}`)
-	}
-	ret.push('options?')
-	return ret.join(', ')
-})
-
-Handlebars.registerHelper('opArgs', (context: CompileData.Operation) => {
-	return [
-		`'${context.method}'`,
-		`\`${context.path.replace(/\{/g, '${')}\``,
-		context.body ? 'body' : 'null',
-		context.query ? 'query' : 'null',
-		'options',
-	].join(', ')
-})
-
-Handlebars.registerHelper('opResponse', (context: CompileData.Operation, options) => {
-	if (context.response) {
-		return expandType(context.response.type, options.data.root)
-	} else {
-		return 'void'
-	}
-})
-
-function expandType(type: string | string[], data?: FormatTypeContext): string {
-	const types = Array.isArray(type) ? type : [type]
-	return types.map((type) => {
-		type = expandTypeArray(type)
-		if (data && !isTypeNatural(type)) {
-			return expandTypeNamespace(type, data)
-		} else {
-			return expandTypeSimple(type)
+	compileTypes(data: CompileData.Data): CompiledFile {
+		return {
+			path: 'types.ts',
+			data: pretify(this.typesTemplate({
+				namespace: pascalCase(data.name),
+				...data,
+			})),
 		}
-	}).join(' | ')
-}
-
-function expandTypeArray(type: string): string {
-	while (type.includes('array:')) {
-		type = type.replace(/^array:(.*)$/, '$1[]')
 	}
-	return type
-}
 
-function expandTypeNamespace(type: string, data: FormatTypeContext): string {
-	if (type[0] === '#') {
-		return `${data.namespace}.${type.slice(1)}`
-	} else {
-		return `${data.apiNamespace}.${type}`
+	compileApi(data: CompileData.Data, api: CompileData.Api): CompiledFile {
+		return {
+			path: `apis/${lcFirst(api.name)}.ts`,
+			data: pretify(this.apiTemplate({
+				namespace: pascalCase(data.name),
+				api,
+				apiClass: pascalCase(api.name) + 'Client',
+				apiNamespace: pascalCase(api.name),
+			})),
+		}
 	}
-}
 
-function expandTypeSimple(type: string): string {
-	return type[0] === '#' ? type.slice(1) : type
-}
+	compileClient(data: CompileData.Data): CompiledFile {
+		return {
+			path: 'client.ts',
+			data: pretify(this.clientTemplate({
+				apis: data.apis.map((api: CompileData.Api) => ({
+					name: lcFirst(api.name),
+					className: pascalCase(api.name) + 'Client',
+				})),
+			})),
+		}
+	}
 
-function isTypeNatural(type: string): boolean {
-	return ['string', 'boolean', 'number', 'any', 'null'].includes(type)
+	compileIndex(data: CompileData.Data): CompiledFile {
+		return {
+			path: 'index.ts',
+			data: pretify(this.indexTemplate({
+				apis: data.apis.map((api: CompileData.Api) => ({
+					name: lcFirst(api.name),
+					className: pascalCase(api.name) + 'Client',
+				})),
+			})),
+		}
+	}
 }

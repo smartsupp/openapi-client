@@ -17,12 +17,16 @@ export type {{definition.name}} =
 export interface {{definition.name}} {
 	{{#each definition.properties as |prop|}}
 	{{#if prop.description}}/** {{prop.description}} */{{/if}}
-	{{prop.name}}{{#unless prop.required}}?{{/unless}}: {{#propType prop.type}}{{/propType}}
+	{{prop.name}}{{#unless prop.required}}?{{/unless}}: {{#propType prop.type}}{{/propType}}{{#if prop.nullable}} | null{{/if}}
 	{{/each}}
 }
 {{/ifEquals}}
 {{/each}}
 {{/inline}}
+
+export interface IAdapter {
+	request<T>(method: string, path: string, body?, query?, options?): Promise<T>
+}
 
 export namespace {{namespace}} {
 	{{> definitions definitions=definitions}}

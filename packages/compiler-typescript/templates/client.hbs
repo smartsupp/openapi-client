@@ -1,0 +1,16 @@
+import { IAdapter } from './types'
+{{#each apis as |api|}}
+import { {{api.className}} } from './apis/{{api.name}}'
+{{/each}}
+
+export class Client {
+	{{#each apis as |api|}}
+	{{api.name}}: {{api.className}}
+	{{/each}}
+
+	constructor(adapter: IAdapter) {
+		{{#each apis as |api|}}
+		this.{{api.name}} = new {{api.className}}(adapter)
+		{{/each}}
+	}
+}

@@ -1,0 +1,12 @@
+import { IAdapter } from './types'
+import { Client } from './client'
+
+export * from './types'
+export * from './client'
+{{#each apis as |api|}}
+export * from './apis/{{api.name}}'
+{{/each}}
+
+export function createClient(adapter: IAdapter): Client {
+	return new Client(adapter)
+}

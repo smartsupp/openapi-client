@@ -224,7 +224,7 @@ export class Transformer {
 
 		} else if (schema.anyOf) {
 			definition.type = 'type'
-			definition.values = schema.oneOf.map((subSchema) => {
+			definition.values = schema.anyOf.map((subSchema) => {
 				return this.transformPropertyType(subSchema, definition.name, definitions)
 			}).flat()
 
@@ -323,7 +323,7 @@ export class Transformer {
 				return definition.name
 			}
 		} else if (schema.anyOf) {
-			return schema.oneOf.map((subSchema) => {
+			return schema.anyOf.map((subSchema) => {
 				return this.transformPropertyType(subSchema, defName, definitions)
 			}).flat()
 		} else if (schema.oneOf) {
