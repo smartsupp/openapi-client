@@ -1,10 +1,23 @@
-.DS_Store
-.idea
-.npmrc
-node_modules
+# dependencies
+node_modules/
+packages/*/package-lock.json
+package-lock.json
+
+# build and test
+packages/*/lib/
+coverage/
+lib/
+out/
+
+# logs
 npm-debug.log
-/eb-versions
-/lerna-debug.log
-lib
-coverage
-out
+lerna-debug.log
+
+# ide
+.idea
+*.sublime-*
+eb-versions
+
+# misc
+.DS_Store
+.npmrc

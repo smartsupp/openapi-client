@@ -33,8 +33,10 @@ export class Transformer {
 
 	generateApisData(spec: OpenAPIV3.Document): { [keyof: string]: ApiOperation[] } {
 		const apis = {}
+		// eslint-disable-next-line guard-for-in
 		for (const path in spec.paths) {
 			const pathItem = spec.paths[path]
+			// eslint-disable-next-line guard-for-in
 			for (const method in pathItem) {
 				const operation = pathItem[method]
 				for (const tag of operation.tags) {
@@ -50,6 +52,7 @@ export class Transformer {
 
 	transformApis() {
 		const apis = this.generateApisData(this.spec)
+		// eslint-disable-next-line guard-for-in
 		for (const name in apis) {
 			const apiGroup: ApiOperation[] = apis[name]
 			const definitions: CompileData.Definition[] = []
@@ -148,6 +151,7 @@ export class Transformer {
 
 	transformOperationResponse(operationId: string, responseObject: OpenAPIV3.ReferenceObject | OpenAPIV3.ResponseObject, definitions: CompileData.Definition[]): CompileData.OperationResponse {
 		if ((responseObject as OpenAPIV3.ReferenceObject).$ref) {
+			// eslint-disable-next-line no-param-reassign
 			responseObject = this.derefResponse(responseObject as OpenAPIV3.ReferenceObject)
 		}
 		const mediaTypeObject: OpenAPIV3.MediaTypeObject = (responseObject as OpenAPIV3.ResponseObject).content['application/json']
@@ -169,12 +173,14 @@ export class Transformer {
 	}
 
 	transformDefinitions() {
+		// eslint-disable-next-line guard-for-in
 		for (const key in this.spec.components.schemas) {
 			const schema: any = this.spec.components.schemas[key]
 			if (!schema.$ref) {
 				schema.title = pascalCase(schema.title ? schema.title : key)
 			}
 		}
+		// eslint-disable-next-line guard-for-in
 		for (const key in this.spec.components.schemas) {
 			const schema = this.spec.components.schemas[key]
 			if ((schema as OpenAPIV3.ReferenceObject).$ref) {
@@ -240,16 +246,16 @@ export class Transformer {
 		} else if (schema.type === 'array') {
 			definition.type = 'type'
 			definition.values = [this.transformType(schema, definition.name + 'Item', definitions)]
-		}
-
-		if (definition.type === null) {
-			throw new Error('Schema was unable to transform')
+		} else {
+			definition.type = 'type'
+			definition.values = [this.transformType(schema, definition.name, definitions)]
 		}
 		return definition
 	}
 
 	transformProperties(schema: OpenAPIV3.SchemaObject, defName: string, definitions: CompileData.Definition[]): CompileData.Property[] {
 		const properties = []
+		// eslint-disable-next-line guard-for-in
 		for (const key in schema.properties) {
 			const prop = this.transformProperty(key, schema.properties[key], defName, definitions)
 			if (schema.required && schema.required.includes(prop.name)) {
@@ -270,23 +276,35 @@ export class Transformer {
 
 	transformPropertyFromRef(name: string, ref: OpenAPIV3.ReferenceObject): CompileData.Property {
 		const schema = this.derefSchema(ref)
-		return {
+		const prop: CompileData.Property = {
 			name,
 			type: schema.title,
 			required: false,
-			nullable: schema.nullable || false,
 			description: schema.description || '',
 		}
+		if (schema.nullable) {
+			prop.type = Array.isArray(prop.type) ? prop.type : [prop.type]
+			if (!prop.type.includes('null')) {
+				prop.type.push('null')
+			}
+		}
+		return prop
 	}
 
 	transformPropertyFromSchema(name: string, schema: OpenAPIV3.SchemaObject, defName: string, definitions: CompileData.Definition[]): CompileData.Property {
-		return {
+		const prop: CompileData.Property = {
 			name,
 			type: this.transformType(schema, defName + pascalCase(name), definitions),
 			required: false,
-			nullable: schema.nullable || false,
 			description: schema.description || '',
 		}
+		if (schema.nullable) {
+			prop.type = Array.isArray(prop.type) ? prop.type : [prop.type]
+			if (!prop.type.includes('null')) {
+				prop.type.push('null')
+			}
+		}
+		return prop
 	}
 
 	transformType(val, defName: string, definitions: CompileData.Definition[]): string | string[] {
@@ -339,7 +357,10 @@ export class Transformer {
 			return schema.oneOf.map((subSchema) => {
 				return this.transformType(subSchema, defName, definitions)
 			}).flat()
+		} else if (schema.nullable) {
+			return 'null'
 		} else {
+			console.log(schema)
 			throw new Error(`Unable to process parameter in ${defName}. Schema not supported`)
 		}
 	}

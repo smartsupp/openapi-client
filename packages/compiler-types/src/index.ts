@@ -17,6 +17,7 @@ export namespace CompileData {
 		type: DefinitionType
 		name: string
 		properties?: Property[]
+		additionalType?: string | string[]
 		values?: any[]
 	}
 
