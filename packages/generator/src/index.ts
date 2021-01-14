@@ -1,10 +1,10 @@
-import { transform } from '@openapi-client/transformer'
 import { compile } from '@openapi-client/compiler-typescript'
-import { OpenAPIV3 } from 'openapi-types'
-import fs from 'fs'
-import path from 'path'
-import { mkdirSync } from 'mkdir-recursive'
+import { transform } from '@openapi-client/transformer'
 import del from 'del'
+import fs from 'fs'
+import { mkdirSync } from 'mkdir-recursive'
+import { OpenAPIV3 } from 'openapi-types'
+import path from 'path'
 
 export interface Options {
 	outDir: string

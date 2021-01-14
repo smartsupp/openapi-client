@@ -53,10 +53,10 @@ describe('Compiler', () => {
 					body: null,
 					query: {
 						type: 'GetQuery',
-						required: true
+						required: true,
 					},
 					response: {
-						type: '#Conversation'
+						type: '#Conversation',
 					},
 				}, {
 					params: [],
@@ -72,7 +72,7 @@ describe('Compiler', () => {
 						required: false,
 					},
 					response: {
-						type: ['SearchResponse', 'array:#Message']
+						type: ['SearchResponse', 'array:#Message'],
 					},
 				}, {
 					params: [{ name: 'id', type: 'string' }],
@@ -88,8 +88,8 @@ describe('Compiler', () => {
 			}],
 		})
 		expect(result).toHaveLength(4)
-		console.log(result[0]['data']) // todo: test output
-		console.log(result[1]['data']) // todo: test output
+		console.log(result[0].data) // todo: test output
+		console.log(result[1].data) // todo: test output
 	})
 
 })

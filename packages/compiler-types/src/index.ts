@@ -25,7 +25,6 @@ export namespace CompileData {
 		name: string
 		type: string | string[]
 		required?: boolean
-		nullable?: boolean
 		description?: string
 	}
 

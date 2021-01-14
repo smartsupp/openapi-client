@@ -20,7 +20,7 @@ export type {{definition.name}} =
 export interface {{definition.name}} {
 	{{#each definition.properties as |prop|}}
 	{{#if prop.description}}/** {{prop.description}} */{{/if}}
-	{{prop.name}}{{#unless prop.required}}?{{/unless}}: {{#propType prop.type}}{{/propType}}{{#if prop.nullable}} | null{{/if}}
+	{{prop.name}}{{#unless prop.required}}?{{/unless}}: {{#propType prop.type}}{{/propType}}
 	{{/each}}
 	{{#if definition.additionalType}}[keyof: string]: {{#propType definition.additionalType}}{{/propType}}{{/if}}
 }

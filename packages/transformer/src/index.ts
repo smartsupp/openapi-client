@@ -1,5 +1,5 @@
 import { CompileData } from '@openapi-client/compiler-types'
-import { OpenAPIV3 } from 'openapi-types';
+import { OpenAPIV3 } from 'openapi-types'
 import { Transformer } from './transformer'
 
 export * from './transformer'

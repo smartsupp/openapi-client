@@ -27,10 +27,10 @@
     "version": "lerna version",
     "publish": "lerna run publish:github",
     "clean": "lerna run clean",
-    "lint": "lerna run lint",
-    "fix": "lerna run fix",
-    "test": "lerna run test",
-    "build": "lerna run build",
+    "lint": "lerna run --stream --concurrency 1 --sort lint",
+    "fix": "lerna run --stream --concurrency 1 --sort fix",
+    "test": "lerna run --stream --concurrency 1 --sort test",
+    "build": "lerna run --stream --concurrency 1 --sort build",
     "build:watch": "lerna run build:watch --stream --no-sort --concurrency 9999"
   },
   "husky": {

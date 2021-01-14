@@ -360,7 +360,6 @@ export class Transformer {
 		} else if (schema.nullable) {
 			return 'null'
 		} else {
-			console.log(schema)
 			throw new Error(`Unable to process parameter in ${defName}. Schema not supported`)
 		}
 	}

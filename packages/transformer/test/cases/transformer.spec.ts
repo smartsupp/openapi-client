@@ -1,5 +1,5 @@
-import { Transformer } from '../../src/'
 import util from 'util'
+import { Transformer } from '../../src/'
 
 describe('Transformer', () => {
 	let transformer: Transformer
