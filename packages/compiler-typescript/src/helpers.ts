@@ -5,7 +5,7 @@ import { expandType } from './utils'
 
 export default {
 	ifEquals: (arg1, arg2, options) => {
-		return (arg1 == arg2) ? options.fn(this) : options.inverse(this)
+		return arg1 === arg2 ? options.fn(this) : options.inverse(this)
 	},
 	pascalCase: (options) => {
 		return pascalCase(options.fn(this))

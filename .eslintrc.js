@@ -6,5 +6,6 @@ module.exports = {
 		'one-var': 'off',
 		'no-dupe-class-members': 'off',
 		'no-redeclare': 'off',
-	}
+		'guard-for-in': 'off',
+	},
 }

@@ -33,10 +33,8 @@ export class Transformer {
 
 	generateApisData(spec: OpenAPIV3.Document): { [keyof: string]: ApiOperation[] } {
 		const apis = {}
-		// eslint-disable-next-line guard-for-in
 		for (const path in spec.paths) {
 			const pathItem = spec.paths[path]
-			// eslint-disable-next-line guard-for-in
 			for (const method in pathItem) {
 				const operation = pathItem[method]
 				for (const tag of operation.tags) {
@@ -52,7 +50,6 @@ export class Transformer {
 
 	transformApis() {
 		const apis = this.generateApisData(this.spec)
-		// eslint-disable-next-line guard-for-in
 		for (const name in apis) {
 			const apiGroup: ApiOperation[] = apis[name]
 			const definitions: CompileData.Definition[] = []
@@ -173,14 +170,12 @@ export class Transformer {
 	}
 
 	transformDefinitions() {
-		// eslint-disable-next-line guard-for-in
 		for (const key in this.spec.components.schemas) {
 			const schema: any = this.spec.components.schemas[key]
 			if (!schema.$ref) {
 				schema.title = pascalCase(schema.title ? schema.title : key)
 			}
 		}
-		// eslint-disable-next-line guard-for-in
 		for (const key in this.spec.components.schemas) {
 			const schema = this.spec.components.schemas[key]
 			if ((schema as OpenAPIV3.ReferenceObject).$ref) {
@@ -255,7 +250,6 @@ export class Transformer {
 
 	transformProperties(schema: OpenAPIV3.SchemaObject, defName: string, definitions: CompileData.Definition[]): CompileData.Property[] {
 		const properties = []
-		// eslint-disable-next-line guard-for-in
 		for (const key in schema.properties) {
 			const prop = this.transformProperty(key, schema.properties[key], defName, definitions)
 			if (schema.required && schema.required.includes(prop.name)) {

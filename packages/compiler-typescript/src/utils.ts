@@ -21,6 +21,7 @@ export function pretify(output: string): string {
 export function expandType(type: string | string[], data?: FormatTypeContext): string {
 	const types = Array.isArray(type) ? type : [type]
 	return types.map((type) => {
+		// eslint-disable-next-line no-param-reassign
 		type = expandTypeArray(type)
 		if (data && !isTypeNatural(type.replace(/\[\]/g, ''))) {
 			return expandTypeNamespace(type, data)
@@ -32,6 +33,7 @@ export function expandType(type: string | string[], data?: FormatTypeContext): s
 
 export function expandTypeArray(type: string): string {
 	while (type.includes('array:')) {
+		// eslint-disable-next-line no-param-reassign
 		type = type.replace(/^array:(.*)$/, '$1[]')
 	}
 	return type
