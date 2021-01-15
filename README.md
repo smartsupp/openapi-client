@@ -36,7 +36,7 @@ npm run build:watch
 There is lot of work todo, like write tests, docs, adapters and so on to make it ready for production usage. 
 If anyone like this idea or output, cooperation is welcome. 
 
-I'm not strong with open-source, so if there is anybody who know how to maintain open-source, setup correct licences i really like that kind of help.
+I'm not strong with open-source, so if there is anybody who want to maintain open-source i really appreciate your help.
 
 Current implementation notes:
 
