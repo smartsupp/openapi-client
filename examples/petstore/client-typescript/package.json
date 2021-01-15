@@ -1,0 +1,17 @@
+{
+  "name": "petstore",
+  "version": "1.0.5",
+  "description": "OpenAPI client for petstore",
+  "license": "Apache 2.0",
+  "author": "Swagger",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "publish:github": "npm publish"
+  },
+  "devDependencies": {
+    "typescript": "^4.1.3"
+  }
+}

@@ -27,24 +27,35 @@ export function expandType(type: string | string[], data?: FormatTypeContext): s
 	const types = Array.isArray(type) ? type : [type]
 	return types.map((type) => {
 		// eslint-disable-next-line no-param-reassign
-		type = expandTypeArray(type)
+		type = formatTypeToTypescript(type)
 		if (data && !isTypeNatural(type.replace(/\[\]/g, ''))) {
-			return expandTypeNamespace(type, data)
+			return formatTypeNamespace(type, data)
 		} else {
-			return expandTypeSimple(type)
+			return formatTypeSimple(type)
 		}
 	}).join(' | ')
 }
 
-export function expandTypeArray(type: string): string {
-	while (type.includes('array:')) {
-		// eslint-disable-next-line no-param-reassign
-		type = type.replace(/^array:(.*)$/, '$1[]')
-	}
-	return type
+/**
+ * Convert to typescript type eg "string" => "string" or "array:array:string" => "string[][]"
+ * @param type Must be in format (array:)*TYPE
+ */
+export function formatTypeToTypescript(type: string): string {
+	const typeParts = type.split(':').reverse()
+	return typeParts.reduce((res: string, type: string) => {
+		if (type === 'array') {
+			return res + '[]'
+		} else {
+			if (type === 'integer') {
+				return 'number'
+			} else {
+				return type
+			}
+		}
+	}, '')
 }
 
-export function expandTypeNamespace(type: string, data: FormatTypeContext): string {
+export function formatTypeNamespace(type: string, data: FormatTypeContext): string {
 	if (type[0] === '#') {
 		return `types.${type.slice(1)}`
 	} else {
@@ -52,7 +63,7 @@ export function expandTypeNamespace(type: string, data: FormatTypeContext): stri
 	}
 }
 
-export function expandTypeSimple(type: string): string {
+export function formatTypeSimple(type: string): string {
 	return type[0] === '#' ? type.slice(1) : type
 }
 
