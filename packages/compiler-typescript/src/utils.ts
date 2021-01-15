@@ -1,12 +1,12 @@
 import prettier from 'prettier'
 
-const ParserOptions: {[keyof: string]: prettier.Options} = {
+const ParserOptions: { [keyof: string]: prettier.Options } = {
 	typescript: {
 		parser: 'typescript',
 		singleQuote: true,
 		printWidth: 200,
 		useTabs: true,
-	}
+	},
 }
 
 interface FormatTypeContext {

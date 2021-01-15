@@ -43,37 +43,37 @@ export class Compiler {
 		const result: CompiledFile[] = []
 		result.push({
 			path: 'src/types.ts',
-			data: this.compileTypes(data)
+			data: this.compileTypes(data),
 		})
 		for (const api of data.apis) {
 			result.push({
 				path: `src/apis/${lcFirst(api.name)}.ts`,
-				data: this.compileApi(data, api)
+				data: this.compileApi(data, api),
 			})
 		}
 		result.push({
 			path: 'src/client.ts',
-			data: this.compileClient(data, options)
+			data: this.compileClient(data, options),
 		})
 		result.push({
 			path: 'src/index.ts',
-			data: this.compileIndex(data, options)
+			data: this.compileIndex(data, options),
 		})
 		result.push({
 			path: 'package.json',
-			data: this.compilePackage(data, options)
+			data: this.compilePackage(data, options),
 		})
 		result.push({
 			path: '.npmignore',
-			data: this.compileNpmignore()
+			data: this.compileNpmignore(),
 		})
 		result.push({
 			path: 'tsconfig.json',
-			data: this.compileTsconfig(options)
+			data: this.compileTsconfig(options),
 		})
 		result.push({
 			path: 'README.md',
-			data: this.compileReadme(data, options)
+			data: this.compileReadme(data, options),
 		})
 		return result
 	}
@@ -85,7 +85,7 @@ export class Compiler {
 	}
 
 	compileApi(data: CompileData.Data, api: CompileData.Api): string {
-		return renderTemplate(this.getTemplate('api'),{
+		return renderTemplate(this.getTemplate('api'), {
 			api,
 			className: pascalCase(api.name) + 'Client',
 			namespace: pascalCase(api.name) + 'Api',
@@ -138,7 +138,7 @@ export class Compiler {
 		return renderTemplate(this.getTemplate('readme'), {
 			name: options.npmName,
 			description: data.info.description,
-		}).replace(/\n\n\n+/gm, "\n\n")
+		}).replace(/\n\n\n+/gm, '\n\n')
 	}
 }
 

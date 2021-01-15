@@ -2,10 +2,10 @@ import { CompiledFile } from '@openapi-client/compiler-types'
 import { transform } from '@openapi-client/transformer'
 import del from 'del'
 import fs from 'fs'
+import isInstalled from 'is-module-installed'
 import { mkdirSync } from 'mkdir-recursive'
 import { OpenAPIV3 } from 'openapi-types'
 import path from 'path'
-import isInstalled from 'is-module-installed'
 
 export type Compile = (data: any, options: any) => CompiledFile[]
 
@@ -18,7 +18,7 @@ export function generateClient(spec: OpenAPIV3.Document, name: string, options: 
 	const compile: Compile = resolveCompiler(name)
 	const result = compile(transform(spec), options.compilerOptions)
 	if (options.outDir) {
-		del.sync([options.outDir  + '/**'])
+		del.sync([options.outDir + '/**'])
 		for (const item of result) {
 			const targetPath = options.outDir + '/' + item.path
 			mkdirSync(path.dirname(targetPath))
