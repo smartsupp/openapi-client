@@ -8,13 +8,11 @@
       "allowBranch": ["master"]
     },
     "publish": {
-      "allowBranch": ["master"],
-      "registry": "https://npm.pkg.github.com"
+      "allowBranch": ["master"]
     }
   },
   "ignoreChanges": [
     "**/test/**",
-    "**/*.md",
     "**/*.js"
   ]
 }
