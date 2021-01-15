@@ -11,9 +11,9 @@ npm install {{name}} --save
 ## Usage
 
 ```typescript
-import coreApi from '@smartsupp/client-core-api'
+import { createClient } from '{{name}}'
 
-const client = coreApi.createClient(somehowCreateAdapter())
+const client = createClient(somehowCreateAdapter())
 // now you can use client instance
 ```
 

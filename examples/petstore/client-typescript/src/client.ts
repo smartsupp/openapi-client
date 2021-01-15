@@ -5,7 +5,7 @@ import { PetClient } from './apis/pet';
 import { StoreClient } from './apis/store';
 import { UserClient } from './apis/user';
 
-export class PetstoreClient {
+export class SwaggerPetstoreClient {
 	pet: PetClient;
 	store: StoreClient;
 	user: UserClient;

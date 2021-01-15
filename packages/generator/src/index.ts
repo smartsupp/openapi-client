@@ -1,4 +1,4 @@
-import { CompiledFile } from '@openapi-client/compiler-types'
+import { CompileData, CompiledFile } from '@openapi-client/compiler-types'
 import { transform } from '@openapi-client/transformer'
 import del from 'del'
 import fs from 'fs'
@@ -9,22 +9,30 @@ import path from 'path'
 
 export type Compile = (data: any, options: any) => CompiledFile[]
 
-export interface Options {
+export interface TargetOptions {
+	name: string
 	outDir: string
 	compilerOptions: any
 }
 
-export function generateClient(spec: OpenAPIV3.Document, name: string, options: Options): any {
-	const compile: Compile = resolveCompiler(name)
-	const result = compile(transform(spec), options.compilerOptions)
-	if (options.outDir) {
-		del.sync([options.outDir + '/**'])
-		for (const item of result) {
-			const targetPath = options.outDir + '/' + item.path
-			mkdirSync(path.dirname(targetPath))
-			fs.writeFileSync(targetPath, item.data, { flag: 'w' })
-		}
+export function generateClients(spec: OpenAPIV3.Document, targets: TargetOptions[]): CompiledFile[][] {
+	const compileData = transform(spec)
+	return targets.map((target) => {
+		return generateClient(compileData, target)
+	})
+}
+
+function generateClient(compileData: CompileData.Data, target: TargetOptions): CompiledFile[] {
+	const compile: Compile = resolveCompiler(target.name)
+	const result = compile(compileData, target.compilerOptions)
+
+	del.sync([target.outDir + '/**'])
+	for (const item of result) {
+		const targetPath = target.outDir + '/' + item.path
+		mkdirSync(path.dirname(targetPath))
+		fs.writeFileSync(targetPath, item.data, { flag: 'w' })
 	}
+
 	return result
 }
 

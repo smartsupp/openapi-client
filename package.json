@@ -21,7 +21,6 @@
     "typescript": "^4.1.3"
   },
   "scripts": {
-    "init": "cp -f $NPMRC_FILE .npmrc",
     "bootstrap": "lerna bootstrap",
     "changed": "lerna changed --all --long",
     "version": "lerna version",

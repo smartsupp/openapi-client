@@ -1,14 +1,15 @@
-import { generateClient } from '../../src/'
+import { generateClients } from '../../src/'
 
 describe('generate client', () => {
 	test('should create files', () => {
-		generateClient(require('../data/openapi.json'), 'typescript', {
-			outDir: __dirname + '/../out',
+		generateClients(require('../data/petstore.json'), [{
+			name: 'typescript',
+			outDir: __dirname + '/../out/typescript',
 			compilerOptions: {
-				npmName: 'petstore',
+				npmName: 'swagger-petstore-client',
 				npmAuthor: 'Swagger',
-				clientClass: 'PetstoreClient',
+				clientClass: 'SwaggerPetstoreClient',
 			}
-		})
+		}])
 	})
 })

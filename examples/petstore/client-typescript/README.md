@@ -1,4 +1,4 @@
-# petstore
+# swagger-petstore-client
 
 This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about
 Swagger at [http://swagger.io](http://swagger.io). In the third iteration of the pet store, we&#x27;ve switched to the design first approach!
@@ -12,15 +12,15 @@ Some useful links:
 ## Install
 
 ```
-npm install petstore --save
+npm install swagger-petstore-client --save
 ```
 
 ## Usage
 
 ```typescript
-import coreApi from '@smartsupp/client-core-api'
+import { createClient } from 'swagger-petstore-client'
 
-const client = coreApi.createClient(somehowCreateAdapter())
+const client = createClient(somehowCreateAdapter())
 // now you can use client instance
 ```
 
