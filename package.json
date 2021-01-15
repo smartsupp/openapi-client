@@ -1,6 +1,7 @@
 {
-  "name": "openapi-client",
+  "name": "@openapi-client/monorepo",
   "private": true,
+  "version": "0.0.0",
   "devDependencies": {
     "@types/jest": "^26.0.19",
     "@types/node": "^14.14.16",
@@ -26,6 +27,7 @@
     "version": "lerna version",
     "publish": "lerna run publish:github",
     "clean": "lerna run clean",
+    "clean:npm": "rimraf './packages/*/node_modules' && rimraf './node_modules' && rimraf './packages/*/package-lock.json' && rimraf './package-lock.json'",
     "lint": "lerna run lint",
     "fix": "lerna run fix",
     "test": "lerna run --stream --concurrency 1 --sort test",

@@ -1,3 +1,3 @@
-# @openapi-client/compiler-generator
+# @openapi-client/generator
 
 Generate clients
