@@ -23,17 +23,29 @@ This project have those goals:
 For now clients dont implement request sending, they have just dependency on interface that execute requests.
 In future i plan to add packages `@openapi-client/adatper-axios` and `@openapi-client/adapter-fetch` for request processing.
 
-## Install
+## Usage
 
 ```bash
-npm install
-npm run bootstrap
-npm run build:watch
+npm i @openapi-client/generator @openapi-client/compiler-typescript
+```
+
+```js
+import { generateClients } from '@openapi-client/generator'
+
+generateClients(require('./petstore.json'), [{
+	name: 'typescript',
+	outDir: __dirname + '/out/typescript',
+	compilerOptions: {
+		npmName: 'swagger-petstore-client',
+		npmAuthor: 'Swagger',
+		clientClass: 'SwaggerPetstoreClient',
+	}
+}])
 ```
 
 ## Development
 
-There is lot of work todo, like write tests, docs, adapters and so on to make it ready for production usage. 
+There is lot of work todo, like write tests, docs, adapters, build from url and so on to make it ready for production usage. 
 If anyone like this idea or output, cooperation is welcome. 
 
 I'm not strong with open-source, so if there is anybody who want to maintain open-source i really appreciate your help.
@@ -42,3 +54,9 @@ Current implementation notes:
 
 - for now only json responses are supported
 - schema title is preferred as interface name
+
+```bash
+npm install
+npm run bootstrap
+npm run build:watch
+```
