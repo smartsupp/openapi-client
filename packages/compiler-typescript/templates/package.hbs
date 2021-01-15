@@ -1,0 +1,20 @@
+{
+  "name": "{{name}}",
+  "version": "{{version}}",
+  "description": "OpenAPI client for {{name}}",
+  {{#if repository}}"repository": "{{repository}}",{{/if}}
+  {{#if homepage}}"homepage": "{{homepage}}",{{/if}}
+  {{#if license}}"license": "{{license}}",{{/if}}
+  {{#if author}}"author": "{{author}}",{{/if}}
+  {{#if publishConfig}}"publishConfig": {{#json publishConfig}}{{/json}},{{/if}}
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "publish:github": "npm publish"
+  },
+  "devDependencies": {
+	"typescript": "^4.1.3"
+  }
+}

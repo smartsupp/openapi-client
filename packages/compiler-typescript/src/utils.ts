@@ -1,19 +1,24 @@
 import prettier from 'prettier'
 
-const PrettierOptions = {
-	parser: 'typescript',
-	singleQuote: true,
-	printWidth: 200,
-	useTabs: true,
+const ParserOptions: {[keyof: string]: prettier.Options} = {
+	typescript: {
+		parser: 'typescript',
+		singleQuote: true,
+		printWidth: 200,
+		useTabs: true,
+	}
 }
 
 interface FormatTypeContext {
 	namespace: string
-	apiNamespace: string
 }
 
-export function pretify(output: string): string {
-	return prettier.format(output, PrettierOptions)
+export function pretify(output: string, parser: prettier.BuiltInParserName): string {
+	const options = {
+		...ParserOptions[parser] || {},
+		parser,
+	}
+	return prettier.format(output, options)
 		.replace(/^\s*\n/gm, '')
 		.replace(/^(\t*export\s(namespace|interface|class)(.*))$/gm, '\n$1')
 }
@@ -41,9 +46,9 @@ export function expandTypeArray(type: string): string {
 
 export function expandTypeNamespace(type: string, data: FormatTypeContext): string {
 	if (type[0] === '#') {
-		return `${data.namespace}.${type.slice(1)}`
+		return `types.${type.slice(1)}`
 	} else {
-		return `${data.apiNamespace}.${type}`
+		return `types.${data.namespace}.${type}`
 	}
 }
 

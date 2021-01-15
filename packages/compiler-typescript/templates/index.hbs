@@ -2,7 +2,7 @@
 /* eslint-disable */
 
 import { IAdapter } from './types'
-import { Client } from './client'
+import { {{clientClassName}} } from './client'
 
 export * from './types'
 export * from './client'
@@ -10,6 +10,10 @@ export * from './client'
 export * from './apis/{{api.name}}'
 {{/each}}
 
-export function createClient(adapter: IAdapter): Client {
-	return new Client(adapter)
+export function createClient(adapter: IAdapter): {{clientClassName}} {
+	return new {{clientClassName}}(adapter)
 }
+
+// default export all
+import * as _export from '.'
+export default _export

@@ -4,9 +4,9 @@ packages/*/package-lock.json
 package-lock.json
 
 # build and test
-packages/*/lib/
+packages/*/dist/
 coverage/
-lib/
+dist/
 out/
 
 # logs

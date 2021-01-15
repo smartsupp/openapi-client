@@ -32,12 +32,10 @@ export interface IAdapter {
 	request<T>(method: string, path: string, body?, query?, options?): Promise<T>
 }
 
-export namespace {{namespace}} {
-	{{> definitions definitions=definitions}}
+{{> definitions definitions=definitions}}
 
-	{{#each apis as |api|}}
-	export namespace {{#pascalCase}}{{api.name}}{{/pascalCase}} {
-		{{> definitions definitions=api.definitions}}
-	}
-	{{/each}}
+{{#each apis as |api|}}
+export namespace {{#pascalCase}}{{api.name}}Api{{/pascalCase}} {
+	{{> definitions definitions=api.definitions}}
 }
+{{/each}}

@@ -6,7 +6,7 @@ import { IAdapter } from './types'
 import { {{api.className}} } from './apis/{{api.name}}'
 {{/each}}
 
-export class Client {
+export class {{clientClassName}} {
 	{{#each apis as |api|}}
 	{{api.name}}: {{api.className}}
 	{{/each}}

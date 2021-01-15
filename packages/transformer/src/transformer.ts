@@ -21,6 +21,7 @@ export class Transformer {
 	toData(): CompileData.Data {
 		this.data = {
 			name: pascalCase(this.spec.info.title),
+			info: this.spec.info,
 			definitions: [],
 			apis: [],
 		}

@@ -1,12 +1,11 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { IAdapter, {{namespace}} } from '../types'
-{{#if api.definitions}}import {{apiNamespace}} = {{namespace}}.{{apiNamespace}}{{/if}}
+import * as types from '../types';
 
-export class {{apiClass}} {
+export class {{className}} {
 	constructor(
-		private adapter: IAdapter
+		private adapter: types.IAdapter
 	) {
 	}
 	{{#each api.operations as |op|}}

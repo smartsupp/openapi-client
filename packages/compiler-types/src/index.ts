@@ -1,8 +1,16 @@
+import { OpenAPIV3 } from 'openapi-types'
+
+export interface CompiledFile {
+	path: string
+	data: string
+}
+
 export namespace CompileData {
 	export type DefinitionType = 'interface' | 'enum' | 'type'
 
 	export interface Data {
 		name: string
+		info: OpenAPIV3.InfoObject
 		definitions: Definition[]
 		apis: Api[]
 	}

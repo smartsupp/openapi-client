@@ -1,15 +1,24 @@
-import { CompileData } from '@openapi-client/compiler-types'
+import { CompileData, CompiledFile } from '@openapi-client/compiler-types'
 import * as fs from 'fs'
 import * as Handlebars from 'handlebars'
 import { pascalCase } from 'pascal-case'
+import prettier from 'prettier'
 import helpers from './helpers'
 import { lcFirst, pretify } from './utils'
 
 const TEMPLATES_DIR = __dirname + '/../templates'
+const DEFAULT_TS_TARGET = 'es2017'
 
-export interface CompiledFile {
-	path: string
-	data: string
+export interface CompilerOptions {
+	npmName: string
+	npmAuthor?: string
+	npmVersion?: string
+	npmLicense?: string
+	npmHomepage?: string
+	npmRepository?: string
+	npmPublishConfig?: any
+	tsTarget?: string
+	clientClass?: string
 }
 
 for (const name in helpers) {
@@ -17,76 +26,127 @@ for (const name in helpers) {
 }
 
 export class Compiler {
-	private readonly apiTemplate: Handlebars.TemplateDelegate
-	private readonly typesTemplate: Handlebars.TemplateDelegate
-	private readonly clientTemplate: Handlebars.TemplateDelegate
-	private readonly indexTemplate: Handlebars.TemplateDelegate
+	private templates: Map<string, Handlebars.TemplateDelegate> = new Map()
 
 	constructor() {
-		this.apiTemplate = Handlebars.compile(this.getTemplate('api'))
-		this.typesTemplate = Handlebars.compile(this.getTemplate('types'))
-		this.clientTemplate = Handlebars.compile(this.getTemplate('client'))
-		this.indexTemplate = Handlebars.compile(this.getTemplate('index'))
 	}
 
-	getTemplate(name: string): string {
-		return fs.readFileSync(`${TEMPLATES_DIR}/${name}.hbs`).toString()
-	}
-
-	compile(data: CompileData.Data): CompiledFile[] {
-		const result = []
-		result.push(this.compileTypes(data))
-		for (const api of data.apis) {
-			result.push(this.compileApi(data, api))
+	getTemplate(name: string): Handlebars.TemplateDelegate {
+		if (!this.templates.has(name)) {
+			const template = Handlebars.compile(loadTemplate(name))
+			this.templates.set(name, template)
 		}
-		result.push(this.compileClient(data))
-		result.push(this.compileIndex(data))
+		return this.templates.get(name)
+	}
+
+	compile(data: CompileData.Data, options: CompilerOptions): CompiledFile[] {
+		const result: CompiledFile[] = []
+		result.push({
+			path: 'src/types.ts',
+			data: this.compileTypes(data)
+		})
+		for (const api of data.apis) {
+			result.push({
+				path: `src/apis/${lcFirst(api.name)}.ts`,
+				data: this.compileApi(data, api)
+			})
+		}
+		result.push({
+			path: 'src/client.ts',
+			data: this.compileClient(data, options)
+		})
+		result.push({
+			path: 'src/index.ts',
+			data: this.compileIndex(data, options)
+		})
+		result.push({
+			path: 'package.json',
+			data: this.compilePackage(data, options)
+		})
+		result.push({
+			path: '.npmignore',
+			data: this.compileNpmignore()
+		})
+		result.push({
+			path: 'tsconfig.json',
+			data: this.compileTsconfig(options)
+		})
+		result.push({
+			path: 'README.md',
+			data: this.compileReadme(data, options)
+		})
 		return result
 	}
 
-	compileTypes(data: CompileData.Data): CompiledFile {
-		return {
-			path: 'types.ts',
-			data: pretify(this.typesTemplate({
-				namespace: pascalCase(data.name),
-				...data,
-			})),
-		}
+	compileTypes(data: CompileData.Data): string {
+		return renderTemplate(this.getTemplate('types'), {
+			...data,
+		}, 'typescript')
 	}
 
-	compileApi(data: CompileData.Data, api: CompileData.Api): CompiledFile {
-		return {
-			path: `apis/${lcFirst(api.name)}.ts`,
-			data: pretify(this.apiTemplate({
-				namespace: pascalCase(data.name),
-				api,
-				apiClass: pascalCase(api.name) + 'Client',
-				apiNamespace: pascalCase(api.name),
-			})),
-		}
+	compileApi(data: CompileData.Data, api: CompileData.Api): string {
+		return renderTemplate(this.getTemplate('api'),{
+			api,
+			className: pascalCase(api.name) + 'Client',
+			namespace: pascalCase(api.name) + 'Api',
+		}, 'typescript')
 	}
 
-	compileClient(data: CompileData.Data): CompiledFile {
-		return {
-			path: 'client.ts',
-			data: pretify(this.clientTemplate({
-				apis: data.apis.map((api: CompileData.Api) => ({
-					name: lcFirst(api.name),
-					className: pascalCase(api.name) + 'Client',
-				})),
+	compileClient(data: CompileData.Data, options: CompilerOptions): string {
+		return renderTemplate(this.getTemplate('client'), {
+			clientClassName: options.clientClass || 'Client',
+			apis: data.apis.map((api: CompileData.Api) => ({
+				name: lcFirst(api.name),
+				className: pascalCase(api.name) + 'Client',
 			})),
-		}
+		}, 'typescript')
 	}
 
-	compileIndex(data: CompileData.Data): CompiledFile {
-		return {
-			path: 'index.ts',
-			data: pretify(this.indexTemplate({
-				apis: data.apis.map((api: CompileData.Api) => ({
-					name: lcFirst(api.name),
-					className: pascalCase(api.name) + 'Client',
-				})),
+	compileIndex(data: CompileData.Data, options: CompilerOptions): string {
+		return renderTemplate(this.getTemplate('index'), {
+			clientClassName: options.clientClass || 'Client',
+			apis: data.apis.map((api: CompileData.Api) => ({
+				name: lcFirst(api.name),
+				className: pascalCase(api.name) + 'Client',
 			})),
-		}
+		}, 'typescript')
 	}
+
+	compilePackage(data: CompileData.Data, options: CompilerOptions): string {
+		return renderTemplate(this.getTemplate('package'), {
+			name: options.npmName,
+			author: options.npmAuthor,
+			homepage: options.npmHomepage,
+			repository: options.npmRepository,
+			version: options.npmVersion || data.info.version,
+			license: options.npmLicense || data.info.license?.name || '',
+			publishConfig: options.npmPublishConfig,
+		}, 'json')
+	}
+
+	compileNpmignore(): string {
+		return renderTemplate(this.getTemplate('npmignore'))
+	}
+
+	compileTsconfig(options: CompilerOptions): string {
+		return renderTemplate(this.getTemplate('tsconfig'), {
+			target: options.tsTarget || DEFAULT_TS_TARGET,
+		})
+	}
+
+	compileReadme(data: CompileData.Data, options: CompilerOptions): string {
+		return renderTemplate(this.getTemplate('readme'), {
+			name: options.npmName,
+			description: data.info.description,
+		}).replace(/\n\n\n+/gm, "\n\n")
+	}
+}
+
+function loadTemplate(name: string): string {
+	return fs.readFileSync(`${TEMPLATES_DIR}/${name}.hbs`).toString()
+}
+
+function renderTemplate(renderer: Handlebars.TemplateDelegate, data: any = {}, pretifyName?: prettier.BuiltInParserName): string {
+	const output = renderer(data)
+	return pretifyName ? pretify(output, pretifyName) : output
 }

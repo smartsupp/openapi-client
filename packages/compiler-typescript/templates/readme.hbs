@@ -1,0 +1,20 @@
+# {{name}}
+
+{{description}}
+
+## Install
+
+```
+npm install {{name}} --save
+```
+
+## Usage
+
+```typescript
+import coreApi from '@smartsupp/client-core-api'
+
+const client = coreApi.createClient(somehowCreateAdapter())
+// now you can use client instance
+```
+
+Adapter must be created and implemented by you. This client only deliver data to you adapter.

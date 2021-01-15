@@ -7,15 +7,18 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
   },
-  "main": "./lib/index.js",
-  "typings": "./lib/index.d.ts",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
   "dependencies": {
     "@openapi-client/compiler-types": "*",
-    "@openapi-client/compiler-typescript": "*",
     "@openapi-client/transformer": "*",
     "del": "^6.0.0",
+    "is-module-installed": "^2.0.13",
     "mkdir-recursive": "^0.4.0",
     "openapi-types": "^7.2.2"
+  },
+  "devDependencies": {
+    "@openapi-client/compiler-typescript": "*"
   },
   "scripts": {
     "clean": "../../node_modules/.bin/rimraf lib",
