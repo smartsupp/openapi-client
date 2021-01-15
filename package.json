@@ -27,7 +27,7 @@
     "version": "lerna version",
     "publish": "lerna run publish:github",
     "clean": "lerna run clean",
-    "clean:npm": "rimraf './packages/*/node_modules' && rimraf './node_modules' && rimraf './packages/*/package-lock.json' && rimraf './package-lock.json'",
+    "clean:npm": "rimraf './packages/*/package-lock.json' && rimraf './packages/*/node_modules' && rimraf './package-lock.json' && rimraf './node_modules'",
     "lint": "lerna run lint",
     "fix": "lerna run fix",
     "test": "lerna run --stream --concurrency 1 --sort test",

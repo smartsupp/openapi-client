@@ -10,6 +10,10 @@ describe('Compiler', () => {
 	test('compile interfaces', () => {
 		const result = compiler.compile({
 			name: 'Smartsupp Core Api',
+			info: {
+				title: 'Smartsupp Core API',
+				version: '1.0.0',
+			},
 			definitions: [{
 				name: 'QueryValue',
 				type: 'type',
@@ -86,10 +90,10 @@ describe('Compiler', () => {
 					},
 				}],
 			}],
+		}, {
+			npmName: 'smartsupp-core',
 		})
-		expect(result).toHaveLength(4)
-		console.log(result[0].data) // todo: test output
-		console.log(result[1].data) // todo: test output
+		expect(result).toHaveLength(8)
 	})
 
 })

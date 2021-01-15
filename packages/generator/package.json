@@ -23,7 +23,7 @@
     "@openapi-client/compiler-typescript": "*"
   },
   "scripts": {
-    "clean": "../../node_modules/.bin/rimraf dist",
+    "clean": "../../node_modules/.bin/rimraf dist test/out",
     "build": "../../node_modules/.bin/run-s clean build:ts",
     "build:ts": "../../node_modules/.bin/tsc -p tsconfig.json",
     "build:watch": "../../node_modules/.bin/tsc -p tsconfig.json -w",
