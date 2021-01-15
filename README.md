@@ -2,7 +2,7 @@
 
 **Project in progress**. 
  
-Best way to start is look on generated client [petstore](./examples/petstore).
+Best way to start is look on generated [petstore client](./examples/petstore/client-typescript).
 
 ## Motivation
 
@@ -13,6 +13,7 @@ Recently i start using official [OpenAPI Generator](https://github.com/OpenAPITo
 In our company we using OpenAPI more and more, and clients are needed like on backend also in frontend.
 
 This project have those goals:
+- only OpenAPI 3.0.* is supported (no planned support for 2.*)
 - client is very simple, logic free
 - generate clean clients with all types
 - interfaces must well named and predicable
