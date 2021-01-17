@@ -14,9 +14,13 @@ export interface Order {
 	status?: OrderStatus
 	complete?: boolean
 }
-export type OrderStatus = 'placed' 
-	| 'approved' 
-	| 'delivered'
+
+export const OrderStatusEnum = {
+	placed: 'placed',
+	approved: 'approved',
+	delivered: 'delivered',
+} as const
+export type OrderStatus = typeof OrderStatusEnum[keyof typeof OrderStatusEnum]
 
 export interface Customer {
 	id?: number
@@ -62,9 +66,13 @@ export interface Pet {
 	/** pet status in the store */
 	status?: PetStatus
 }
-export type PetStatus = 'available' 
-	| 'pending' 
-	| 'sold'
+
+export const PetStatusEnum = {
+	available: 'available',
+	pending: 'pending',
+	sold: 'sold',
+} as const
+export type PetStatus = typeof PetStatusEnum[keyof typeof PetStatusEnum]
 
 export interface ApiResponse {
 	code?: number
@@ -73,9 +81,12 @@ export interface ApiResponse {
 }
 
 export namespace PetApi {
-	export type FindPetsByStatusQueryStatus = 'available' 
-	| 'pending' 
-	| 'sold'
+	export const FindPetsByStatusQueryStatusEnum = {
+		available: 'available',
+		pending: 'pending',
+		sold: 'sold',
+	} as const
+	export type FindPetsByStatusQueryStatus = typeof FindPetsByStatusQueryStatusEnum[keyof typeof FindPetsByStatusQueryStatusEnum]
 
 	export interface FindPetsByStatusQuery {
 		/** Status values that need to be considered for filter */
