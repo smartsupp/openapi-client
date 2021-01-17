@@ -4,10 +4,12 @@
 {{#*inline "definitions"}}
 {{#each definitions as |definition|}}
 {{#ifEquals definition.type 'enum'}}
-export type {{definition.name}} =
+export const {{definition.name}}Enum = {
 	{{#each definition.values as |value|}}
-	| {{#enumValue value}}{{/enumValue}}
+	'{{value}}': {{#enumValue value}}{{/enumValue}},
 	{{/each}}
+} as const
+export type {{definition.name}} = typeof {{definition.name}}Enum[keyof typeof {{definition.name}}Enum]
 {{/ifEquals}}
 {{#ifEquals definition.type 'type'}}
 export type {{definition.name}} =
