@@ -28,7 +28,7 @@ export interface {{definition.name}} {
 {{/inline}}
 
 export interface IAdapter {
-	request<T>(method: string, path: string, body?, query?, options?): Promise<T>
+	request<T>(method: string, path: string, body?: any, query?: any, options?: any): Promise<T>
 }
 
 {{> definitions definitions=definitions}}
