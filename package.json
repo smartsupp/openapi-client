@@ -25,7 +25,6 @@
     "bootstrap": "lerna bootstrap",
     "changed": "lerna changed --all --long",
     "version": "lerna version",
-    "publish": "lerna run publish:github",
     "clean": "lerna run clean",
     "clean:npm": "rimraf './packages/*/package-lock.json' && rimraf './packages/*/node_modules' && rimraf './package-lock.json' && rimraf './node_modules'",
     "lint": "lerna run lint",
