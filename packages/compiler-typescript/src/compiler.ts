@@ -83,6 +83,7 @@ export class Compiler {
 			...data,
 		}, 'typescript')
 			.replace(/{\n+/gm, '{\n') // remove new lines after namespace
+			.replace(/}\nexport/gm, '}\n\nexport') // add missing new lines before export
 	}
 
 	compileApi(data: CompileData.Data, api: CompileData.Api): string {
