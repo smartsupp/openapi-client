@@ -206,7 +206,7 @@ export class Transformer {
 				definition.additionalType = this.transformType(schema.additionalProperties, definition.name + 'Props', definitions)
 			}
 
-		} else if (schema.type === 'string' && schema.enum) {
+		} else if (schema.enum) {
 			definition.type = 'enum'
 			definition.values = schema.enum
 
@@ -320,7 +320,7 @@ export class Transformer {
 	}
 
 	transformTypeFromSchema(schema: OpenAPIV3.SchemaObject, defName: string, definitions: CompileData.Definition[]): string | string[] {
-		if (schema.type === 'object') {
+		if (schema.type === 'object' || schema.enum) {
 			const definition = this.transformDefinition(schema, defName, definitions)
 			definitions.push(definition)
 			return definition.name
