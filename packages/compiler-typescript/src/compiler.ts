@@ -82,6 +82,8 @@ export class Compiler {
 		return renderTemplate(this.getTemplate('types'), {
 			...data,
 		}, 'typescript')
+			.replace(/{\n+/gm, '{\n') // remove new lines after namespace
+			.replace(/\|([^|]+)/gm, '\n\t|$1') // multiline union type
 	}
 
 	compileApi(data: CompileData.Data, api: CompileData.Api): string {

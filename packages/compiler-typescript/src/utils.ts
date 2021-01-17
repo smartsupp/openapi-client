@@ -3,6 +3,7 @@ import prettier from 'prettier'
 const ParserOptions: { [keyof: string]: prettier.Options } = {
 	typescript: {
 		parser: 'typescript',
+		semi: false,
 		singleQuote: true,
 		printWidth: 200,
 		useTabs: true,
