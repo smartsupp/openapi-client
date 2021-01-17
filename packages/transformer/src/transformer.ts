@@ -1,5 +1,4 @@
 import { CompileData } from '@openapi-client/compiler-types'
-import derefJsonSchema from 'json-schema-deref-sync'
 import mergeAllOf from 'json-schema-merge-allof'
 import { OpenAPIV3 } from 'openapi-types'
 import { pascalCase } from 'pascal-case'
@@ -10,15 +9,21 @@ interface ApiOperation {
 	operation: OpenAPIV3.OperationObject
 }
 
+export interface TransformOptions {
+	requestBodyRequiredPropsWithDefaults?: boolean
+}
+
 export class Transformer {
 	private data: CompileData.Data
+	private options: TransformOptions
 
 	constructor(
 		private spec: OpenAPIV3.Document,
 	) {
 	}
 
-	toData(): CompileData.Data {
+	transform(options: TransformOptions = {}): CompileData.Data {
+		this.options = options
 		this.data = {
 			name: pascalCase(this.spec.info.title),
 			info: this.spec.info,
@@ -212,12 +217,7 @@ export class Transformer {
 
 		} else if (schema.allOf) {
 			const schemas = schema.allOf.map((childSchema) => {
-				const schema = derefJsonSchema({
-					...childSchema,
-					components: { schemas: this.spec.components.schemas },
-				})
-				delete schema.components
-				return schema
+				return this.derefSchema(childSchema)
 			})
 			const mergedSchema = mergeAllOf(schemas, {
 				resolvers: {
@@ -298,6 +298,10 @@ export class Transformer {
 			if (!prop.type.includes('null')) {
 				prop.type.push('null')
 			}
+		}
+		// when used on server when defaults are filled by schema then default values always exists and can be set as required
+		if (defName && defName.includes('Body') && this.options.requestBodyRequiredPropsWithDefaults && schema.hasOwnProperty('default')) {
+			prop.required = true
 		}
 		return prop
 	}

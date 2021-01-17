@@ -9,7 +9,7 @@ describe('Transformer', () => {
 	})
 
 	test('toData()', () => {
-		const result = transformer.toData()
+		const result = transformer.transform()
 		expect(result).toBeDefined()
 		dump(result)
 	})
