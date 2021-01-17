@@ -2,103 +2,110 @@
 /* eslint-disable */
 
 export interface IAdapter {
-	request<T>(method: string, path: string, body?, query?, options?): Promise<T>;
+	request<T>(method: string, path: string, body?: any, query?: any, options?: any): Promise<T>
 }
 
 export interface Order {
-	id?: number;
-	petId?: number;
-	quantity?: number;
-	shipDate?: string;
+	id?: number
+	petId?: number
+	quantity?: number
+	shipDate?: string
 	/** Order Status */
-	status?: string;
-	complete?: boolean;
+	status?: OrderStatus
+	complete?: boolean
 }
+export type OrderStatus = 'placed' 
+	| 'approved' 
+	| 'delivered'
 
 export interface Customer {
-	id?: number;
-	username?: string;
-	address?: Address[];
+	id?: number
+	username?: string
+	address?: Address[]
 }
 
 export interface Address {
-	street?: string;
-	city?: string;
-	state?: string;
-	zip?: string;
+	street?: string
+	city?: string
+	state?: string
+	zip?: string
 }
 
 export interface Category {
-	id?: number;
-	name?: string;
+	id?: number
+	name?: string
 }
 
 export interface User {
-	id?: number;
-	username?: string;
-	firstName?: string;
-	lastName?: string;
-	email?: string;
-	password?: string;
-	phone?: string;
+	id?: number
+	username?: string
+	firstName?: string
+	lastName?: string
+	email?: string
+	password?: string
+	phone?: string
 	/** User Status */
-	userStatus?: number;
+	userStatus?: number
 }
 
 export interface Tag {
-	id?: number;
-	name?: string;
+	id?: number
+	name?: string
 }
 
 export interface Pet {
-	id?: number;
-	name: string;
-	category?: Category;
-	photoUrls: string[];
-	tags?: Tag[];
+	id?: number
+	name: string
+	category?: Category
+	photoUrls: string[]
+	tags?: Tag[]
 	/** pet status in the store */
-	status?: string;
+	status?: PetStatus
 }
+export type PetStatus = 'available' 
+	| 'pending' 
+	| 'sold'
 
 export interface ApiResponse {
-	code?: number;
-	type?: string;
-	message?: string;
+	code?: number
+	type?: string
+	message?: string
 }
 
 export namespace PetApi {
+	export type FindPetsByStatusQueryStatus = 'available' 
+	| 'pending' 
+	| 'sold'
 
 	export interface FindPetsByStatusQuery {
 		/** Status values that need to be considered for filter */
-		status?: string;
+		status?: FindPetsByStatusQueryStatus
 	}
 
 	export interface FindPetsByTagsQuery {
 		/** Tags to filter by */
-		tags?: string[];
+		tags?: string[]
 	}
 
 	export interface UpdatePetWithFormQuery {
 		/** Name of pet that needs to be updated */
-		name?: string;
+		name?: string
 		/** Status of pet that needs to be updated */
-		status?: string;
+		status?: string
 	}
 }
 
 export namespace StoreApi {
-
 	export interface GetInventoryResponse {
-		[keyof: string]: number;
+		[keyof: string]: number
 	}
 }
 
 export namespace UserApi {
-
 	export interface LoginUserQuery {
 		/** The user name for login */
-		username?: string;
+		username?: string
 		/** The password for login in clear text */
-		password?: string;
+		password?: string
 	}
 }
