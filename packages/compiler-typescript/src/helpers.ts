@@ -19,12 +19,12 @@ export default {
 	propType: (context: string | string[]) => {
 		return expandType(context)
 	},
-	enumName: (context: string) => {
-		let enumName = pascalCase(`${context}`)
-		if (enumName.match(/^[0-9].*/)) {
-			enumName = '_' + enumName
+	enumValue: (context: string | number | boolean) => {
+		if (typeof context === 'string') {
+			return `'${context}'`
+		} else {
+			return context
 		}
-		return enumName
 	},
 	opParams: (context: CompileData.Operation, options) => {
 		const ret = []

@@ -19,9 +19,13 @@ describe('Compiler', () => {
 				type: 'type',
 				values: ['string', 'number', 'boolean'],
 			}, {
-				name: 'ConversationTypeEnum',
+				name: 'ConversationType',
 				type: 'enum',
 				values: ['open', 'closed'],
+			}, {
+				name: 'ConversationRating',
+				type: 'enum',
+				values: [1, 2, 3, 4, 5],
 			}, {
 				name: 'ContentFilters',
 				type: 'interface',
@@ -94,6 +98,7 @@ describe('Compiler', () => {
 			npmName: 'smartsupp-core',
 		})
 		expect(result).toHaveLength(8)
+		console.log(result[0].data)
 	})
 
 })

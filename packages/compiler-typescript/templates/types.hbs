@@ -4,11 +4,10 @@
 {{#*inline "definitions"}}
 {{#each definitions as |definition|}}
 {{#ifEquals definition.type 'enum'}}
-export enum {{definition.name}} {
+export type {{definition.name}} =
 	{{#each definition.values as |value|}}
-	{{#enumName value}}{{/enumName}} = '{{value}}',
+	| {{#enumValue value}}{{/enumValue}}
 	{{/each}}
-}
 {{/ifEquals}}
 {{#ifEquals definition.type 'type'}}
 export type {{definition.name}} =
