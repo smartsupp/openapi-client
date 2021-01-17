@@ -43,8 +43,12 @@ function resolveCompiler(name: string): Compile {
 	]
 	for (const name of names) {
 		if (isInstalled(name)) {
+			const compilerModule = require(name)
+			if (!compilerModule.compile) {
+				throw new Error(`Module ${name} was found, but is not compatible. Missing compile function.`)
+			}
 			return require(name).compile
 		}
 	}
-	throw new Error(`Compiler module not found. Please install any of ${names.join(', ')}`)
+	throw new Error(`Compiler module not found. Please install any of ${names.join(', ')}.`)
 }
