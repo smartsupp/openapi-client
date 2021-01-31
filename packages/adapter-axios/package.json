@@ -1,6 +1,6 @@
 {
   "name": "@openapi-client/adapter-axios",
-  "version": "0.1.8",
+  "version": "0.1.0",
   "description": "Axios adapter",
   "repository": "https://github.com/smartsupp/openapi-client.git",
   "homepage": "https://github.com/smartsupp/openapi-client/tree/master/packages/adapter-axios",
