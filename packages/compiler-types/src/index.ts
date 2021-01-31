@@ -65,5 +65,6 @@ export namespace CompileData {
 
 	export interface OperationResponse {
 		type: string | string[]
+		required?: boolean
 	}
 }
