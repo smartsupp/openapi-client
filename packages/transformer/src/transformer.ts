@@ -1,7 +1,8 @@
 import { CompileData } from '@openapi-client/compiler-types'
-import mergeAllOf from 'json-schema-merge-allof'
 import { OpenAPIV3 } from 'openapi-types'
 import { pascalCase } from 'pascal-case'
+import { isAllOfSchemaExtendable, mergeSchemas } from './helpers'
+import * as extensions from './extenstions'
 
 interface ApiOperation {
 	path: string,
@@ -69,7 +70,7 @@ export class Transformer {
 		}
 	}
 
-	transformOperation(method: string, path: string, operation: any, definitions: CompileData.Definition[]): CompileData.Operation {
+	transformOperation(method: string, path: string, operation: OpenAPIV3.OperationObject, definitions: CompileData.Definition[]): CompileData.Operation {
 		const result: CompileData.Operation = {
 			name: operation.operationId,
 			method,
@@ -79,39 +80,46 @@ export class Transformer {
 			body: null,
 			response: null,
 		}
+
 		if (operation.parameters) {
-			result.params = this.transformOperationParams(operation.parameters)
-			result.query = this.transformOperationQuery(operation.operationId, operation.parameters, definitions)
+			const parameters = this.derefParameters(operation.parameters)
+			result.params = this.transformOperationParams(parameters, definitions)
+			result.query = this.transformOperationQuery(operation.operationId, parameters, definitions)
 		}
+
 		if (operation.requestBody) {
-			result.body = this.transformOperationBody(operation.operationId, operation.requestBody, definitions)
+			const requestBody = this.derefRequestBody(operation.requestBody)
+			result.body = this.transformOperationBody(operation.operationId, requestBody, definitions)
 		}
+
 		if (operation.responses) {
-			if (operation.responses['200'] && operation.responses['200'].content) {
-				result.response = this.transformOperationResponse(operation.operationId, operation.responses['200'], definitions)
-			} else if (operation.responses['201'] && operation.responses['201'].content) {
-				result.response = this.transformOperationResponse(operation.operationId, operation.responses['201'], definitions)
+			if (operation.responses['200'] || operation.responses['201']) {
+				const response = this.derefResponse(operation.responses['200'] || operation.responses['201'])
+				result.response = this.transformOperationResponse(operation.operationId, response, definitions)
+			}
+			if (result.response && operation.responses['404'] && operation[extensions.X_GENERATOR_RESPONSE_NULLABLE]) {
+				result.response.required = false
+			}
+		}
+
+		return result
+	}
+
+	transformOperationParams(parameters: OpenAPIV3.ParameterObject[], definitions: CompileData.Definition[]): CompileData.OperationParam[] {
+		const result = []
+		for (const param of parameters) {
+			if (param.in === 'path') {
+				result.push({
+					name: param.name,
+					type: this.transformType(param.schema, 'Param', definitions),
+					description: param.description || null,
+				})
 			}
 		}
 		return result
 	}
 
-	transformOperationParams(parameters: OpenAPIV3.ParameterObject[]): CompileData.OperationParam[] {
-		const params = []
-		for (const param of parameters) {
-			if (param.in === 'path') {
-				const schema = this.derefSchema(param.schema)
-				params.push({
-					name: param.name,
-					type: schema.type,
-					description: param.description || null,
-				})
-			}
-		}
-		return params
-	}
-
-	transformOperationQuery(operationId: string, parameters: OpenAPIV3.ParameterObject[], definitions: CompileData.Definition[]): CompileData.OperationQuery {
+	transformOperationQuery(operationId: string, parameters: OpenAPIV3.ParameterObject[], definitions: CompileData.Definition[]): CompileData.OperationQuery | null {
 		const querySchema: OpenAPIV3.SchemaObject = {
 			type: 'object',
 			properties: {},
@@ -128,15 +136,15 @@ export class Transformer {
 				}
 			}
 		}
-		if (Object.keys(querySchema.properties).length > 0) {
-			const definition = this.transformDefinition(querySchema, pascalCase(operationId) + 'Query', definitions)
-			definitions.push(definition)
-			return {
-				type: definition.name,
-				required: querySchema.required.length > 0,
-			}
-		} else {
+		if (Object.keys(querySchema.properties).length === 0) {
 			return null
+		}
+
+		const definition = this.transformDefinition(querySchema, pascalCase(operationId) + 'Query', definitions)
+		definitions.push(definition)
+		return {
+			type: definition.name,
+			required: querySchema.required.length > 0,
 		}
 	}
 
@@ -145,6 +153,7 @@ export class Transformer {
 		if (!mediaTypeObject) {
 			throw new Error(`Expected request content-type application/json, got ${Object.keys(requestBody.content)}`)
 		}
+
 		const type = this.resolveSchemaType(mediaTypeObject.schema, pascalCase(operationId) + 'Body', definitions)
 		return {
 			type,
@@ -152,18 +161,20 @@ export class Transformer {
 		}
 	}
 
-	transformOperationResponse(operationId: string, responseObject: OpenAPIV3.ReferenceObject | OpenAPIV3.ResponseObject, definitions: CompileData.Definition[]): CompileData.OperationResponse {
-		if ((responseObject as OpenAPIV3.ReferenceObject).$ref) {
-			// eslint-disable-next-line no-param-reassign
-			responseObject = this.derefResponse(responseObject as OpenAPIV3.ReferenceObject)
+	transformOperationResponse(operationId: string, response: OpenAPIV3.ResponseObject, definitions: CompileData.Definition[]): CompileData.OperationResponse | null {
+		if (!response.content) {
+			return null
 		}
-		const mediaTypeObject: OpenAPIV3.MediaTypeObject = (responseObject as OpenAPIV3.ResponseObject).content['application/json']
+
+		const mediaTypeObject: OpenAPIV3.MediaTypeObject = response.content['application/json']
 		if (!mediaTypeObject) {
-			throw new Error(`Expected response content-type application/json, got ${Object.keys((responseObject as OpenAPIV3.ResponseObject).content)}`)
+			throw new Error(`Expected response content-type application/json, got ${Object.keys(response.content)}`)
 		}
+
 		const type = this.resolveSchemaType(mediaTypeObject.schema, pascalCase(operationId) + 'Response', definitions)
 		return {
 			type,
+			required: true,
 		}
 	}
 
@@ -184,16 +195,15 @@ export class Transformer {
 		}
 		for (const key in this.spec.components.schemas) {
 			const schema = this.spec.components.schemas[key]
-			if ((schema as OpenAPIV3.ReferenceObject).$ref) {
-				continue
+			if (!(schema as OpenAPIV3.ReferenceObject).$ref) {
+				const definitions: CompileData.Definition[] = []
+				const definition = this.transformDefinition(schema as OpenAPIV3.SchemaObject, '', definitions)
+				this.data.definitions.push(definition, ...definitions)
 			}
-			const definitions: CompileData.Definition[] = []
-			const definition = this.transformDefinition(schema as OpenAPIV3.SchemaObject, '', definitions)
-			this.data.definitions.push(definition, ...definitions)
 		}
 	}
 
-	transformDefinition(schema: OpenAPIV3.SchemaObject, name: string = '', definitions: CompileData.Definition[]): CompileData.Definition {
+	transformDefinition(schema: OpenAPIV3.SchemaObject, name: string = '', definitions: CompileData.Definition[], parentSchema?: OpenAPIV3.ReferenceObject): CompileData.Definition {
 		const definition: CompileData.Definition = {
 			type: null,
 			name: pascalCase(schema.title || name),
@@ -214,18 +224,23 @@ export class Transformer {
 		} else if (schema.enum) {
 			definition.type = 'enum'
 			definition.values = schema.enum
+			if (definition.values.includes(null)) {
+				definition.values.splice(definition.values.indexOf(null), 1)
+			}
 
 		} else if (schema.allOf) {
-			const schemas = schema.allOf.map((childSchema) => {
-				return this.derefSchema(childSchema)
-			})
-			const mergedSchema = mergeAllOf(schemas, {
-				resolvers: {
-					example: (values) => values[0],
-				},
-			})
-			mergedSchema.title = schema.title || mergedSchema.title
-			return this.transformDefinition(mergedSchema, definition.name, definitions)
+			if (isAllOfSchemaExtendable(schema)) {
+				const [refSchema, ...otherSchemas] = schema.allOf
+				const schemas = otherSchemas.map(this.derefSchema.bind(this))
+				const mergedSchema = mergeSchemas(schemas)
+				mergedSchema.title = schema.title || mergedSchema.title
+				return this.transformDefinition(mergedSchema, definition.name, definitions, refSchema as OpenAPIV3.ReferenceObject)
+			} else {
+				const schemas = schema.allOf.map(this.derefSchema.bind(this))
+				const mergedSchema = mergeSchemas(schemas)
+				mergedSchema.title = schema.title || mergedSchema.title
+				return this.transformDefinition(mergedSchema, definition.name, definitions)
+			}
 
 		} else if (schema.oneOf) {
 			definition.type = 'type'
@@ -246,6 +261,14 @@ export class Transformer {
 			definition.type = 'type'
 			definition.values = [this.transformType(schema, definition.name, definitions)]
 		}
+		if (definition.values) {
+			definition.values = [...new Set(definition.values)]
+		}
+
+		if (parentSchema) {
+			definition.extends = this.derefSchema(parentSchema).title
+		}
+
 		return definition
 	}
 
@@ -261,11 +284,11 @@ export class Transformer {
 		return properties
 	}
 
-	transformProperty(name: string, val: any, defName: string, definitions: CompileData.Definition[]): CompileData.Property {
-		if (val.$ref) {
-			return this.transformPropertyFromRef(name, val)
+	transformProperty(name: string, refOrSchema: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject, defName: string, definitions: CompileData.Definition[]): CompileData.Property {
+		if ((refOrSchema as OpenAPIV3.ReferenceObject).$ref) {
+			return this.transformPropertyFromRef(name, refOrSchema as OpenAPIV3.ReferenceObject)
 		} else {
-			return this.transformPropertyFromSchema(name, val, defName, definitions)
+			return this.transformPropertyFromSchema(name, refOrSchema as OpenAPIV3.SchemaObject, defName, definitions)
 		}
 	}
 
@@ -299,23 +322,27 @@ export class Transformer {
 				prop.type.push('null')
 			}
 		}
-		// when used on server when defaults are filled by schema then default values always exists and can be set as required
-		if (defName && defName.includes('Body') && this.options.requestBodyRequiredPropsWithDefaults && schema.hasOwnProperty('default')) {
-			prop.required = true
+		if (this.options.requestBodyRequiredPropsWithDefaults) {
+			// When used on server defaults are filled by schema, then default values always exists and can be set as required for interface.
+			if (defName && defName.includes('Body') && schema.hasOwnProperty('default')) {
+				prop.required = true
+			}
 		}
 		return prop
 	}
 
-	transformType(val, defName: string, definitions: CompileData.Definition[]): string | string[] {
-		if (val.$ref) {
-			return this.transformTypeFromRef(val, defName)
+	transformType(schemaOrRef: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject, defName: string, definitions: CompileData.Definition[]): string | string[] {
+		let type
+		if ((schemaOrRef as OpenAPIV3.ReferenceObject).$ref) {
+			type = this.transformTypeFromRef(schemaOrRef as OpenAPIV3.ReferenceObject, defName)
 		} else {
-			return this.transformTypeFromSchema(val, defName, definitions)
+			type = this.transformTypeFromSchema(schemaOrRef as OpenAPIV3.SchemaObject, defName, definitions)
 		}
+		return Array.isArray(type) ? [...new Set(type)] : type
 	}
 
-	transformTypeFromRef(schema: OpenAPIV3.ReferenceObject, defName: string): string {
-		const type = this.derefSchema(schema).title
+	transformTypeFromRef(ref: OpenAPIV3.ReferenceObject, defName: string): string {
+		const type = this.derefSchema(ref).title
 		if (defName && !type.includes(defName)) {
 			return '#' + type
 		} else {
@@ -348,30 +375,46 @@ export class Transformer {
 				definitions.push(definition)
 				return definition.name
 			}
+
 		} else if (schema.anyOf) {
 			return schema.anyOf.map((subSchema) => {
 				return this.transformType(subSchema, defName, definitions)
 			}).flat()
+
 		} else if (schema.oneOf) {
 			return schema.oneOf.map((subSchema) => {
 				return this.transformType(subSchema, defName, definitions)
 			}).flat()
+
 		} else if (schema.nullable) {
 			return 'null'
+
 		} else {
 			throw new Error(`Unable to process parameter in ${defName}. Schema not supported`)
 		}
 	}
 
-	derefSchema(schema): OpenAPIV3.SchemaObject {
-		return this.derefObject(schema, 'schemas') as OpenAPIV3.SchemaObject
+	derefParameters(params: (OpenAPIV3.ReferenceObject | OpenAPIV3.ParameterObject)[]): OpenAPIV3.ParameterObject[] {
+		return params.map(this.derefParameter.bind(this))
 	}
 
-	derefResponse(response): OpenAPIV3.ResponseObject {
-		return this.derefObject(response, 'responses') as OpenAPIV3.ResponseObject
+	derefParameter(paramOrRef: OpenAPIV3.ParameterObject | OpenAPIV3.ReferenceObject): OpenAPIV3.ParameterObject {
+		return this.derefObject(paramOrRef, 'parameters') as OpenAPIV3.ParameterObject
 	}
 
-	derefObject(obj, from: 'schemas' | 'responses') {
+	derefSchema(schemaOrRef: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject): OpenAPIV3.SchemaObject {
+		return this.derefObject(schemaOrRef, 'schemas') as OpenAPIV3.SchemaObject
+	}
+
+	derefResponse(responseOrRef: OpenAPIV3.ResponseObject | OpenAPIV3.ReferenceObject): OpenAPIV3.ResponseObject {
+		return this.derefObject(responseOrRef, 'responses') as OpenAPIV3.ResponseObject
+	}
+
+	derefRequestBody(requestBodyOrRef: OpenAPIV3.RequestBodyObject | OpenAPIV3.ReferenceObject): OpenAPIV3.RequestBodyObject {
+		return this.derefObject(requestBodyOrRef, 'requestBodies') as OpenAPIV3.RequestBodyObject
+	}
+
+	derefObject(obj, from: 'schemas' | 'responses' | 'parameters' | 'requestBodies') {
 		if (!obj.$ref) {
 			return obj
 		}
