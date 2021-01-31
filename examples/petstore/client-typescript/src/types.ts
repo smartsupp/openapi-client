@@ -1,52 +1,74 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export interface AdapterResponse<T> {
+	status: number
+	statusText: string
+	data: T
+	headers: Record<string, string>
+}
+
 export interface IAdapter {
-	request<T>(method: string, path: string, body?: any, query?: any, options?: any): Promise<T>
+	request<T = any>(method: string, path: string, body?: any, query?: any, options?: any): Promise<AdapterResponse<T>>
 }
 
 export interface Order {
 	id?: number
+
 	petId?: number
+
 	quantity?: number
+
 	shipDate?: string
 	/** Order Status */
 	status?: OrderStatus
+
 	complete?: boolean
 }
 
-export const OrderStatusEnum = {
-	placed: 'placed',
-	approved: 'approved',
-	delivered: 'delivered',
-} as const
-export type OrderStatus = typeof OrderStatusEnum[keyof typeof OrderStatusEnum]
+export enum OrderStatus {
+	Placed = 'placed',
+	Approved = 'approved',
+	Delivered = 'delivered',
+}
 
 export interface Customer {
 	id?: number
+
 	username?: string
+
 	address?: Address[]
 }
 
 export interface Address {
 	street?: string
+
 	city?: string
+
 	state?: string
+
 	zip?: string
 }
 
 export interface Category {
 	id?: number
+
 	name?: string
 }
 
 export interface User {
 	id?: number
+
 	username?: string
+
 	firstName?: string
+
 	lastName?: string
+
 	email?: string
+
 	password?: string
+
 	phone?: string
 	/** User Status */
 	userStatus?: number
@@ -54,39 +76,44 @@ export interface User {
 
 export interface Tag {
 	id?: number
+
 	name?: string
 }
 
 export interface Pet {
 	id?: number
+
 	name: string
+
 	category?: Category
+
 	photoUrls: string[]
+
 	tags?: Tag[]
 	/** pet status in the store */
 	status?: PetStatus
 }
 
-export const PetStatusEnum = {
-	available: 'available',
-	pending: 'pending',
-	sold: 'sold',
-} as const
-export type PetStatus = typeof PetStatusEnum[keyof typeof PetStatusEnum]
+export enum PetStatus {
+	Available = 'available',
+	Pending = 'pending',
+	Sold = 'sold',
+}
 
 export interface ApiResponse {
 	code?: number
+
 	type?: string
+
 	message?: string
 }
 
 export namespace PetApi {
-	export const FindPetsByStatusQueryStatusEnum = {
-		available: 'available',
-		pending: 'pending',
-		sold: 'sold',
-	} as const
-	export type FindPetsByStatusQueryStatus = typeof FindPetsByStatusQueryStatusEnum[keyof typeof FindPetsByStatusQueryStatusEnum]
+	export enum FindPetsByStatusQueryStatus {
+		Available = 'available',
+		Pending = 'pending',
+		Sold = 'sold',
+	}
 
 	export interface FindPetsByStatusQuery {
 		/** Status values that need to be considered for filter */
