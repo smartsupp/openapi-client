@@ -1,5 +1,6 @@
-import { CompileData, CompiledFile } from '@openapi-client/compiler-types'
+import { CompiledFile } from '@openapi-client/compiler-types'
 import { transform } from '@openapi-client/transformer'
+import { TransformOptions } from '@openapi-client/transformer'
 import del from 'del'
 import fs from 'fs'
 import isInstalled from 'is-module-installed'
@@ -12,17 +13,18 @@ export type Compile = (data: any, options: any) => CompiledFile[]
 export interface TargetOptions {
 	name: string
 	outDir: string
-	compilerOptions: any
+	compilerOptions?: any
+	transformOptions?: TransformOptions
 }
 
 export function generateClients(spec: OpenAPIV3.Document, targets: TargetOptions[]): CompiledFile[][] {
-	const compileData = transform(spec)
 	return targets.map((target) => {
-		return generateClient(compileData, target)
+		return generateClient(spec, target)
 	})
 }
 
-function generateClient(compileData: CompileData.Data, target: TargetOptions): CompiledFile[] {
+function generateClient(spec: OpenAPIV3.Document, target: TargetOptions): CompiledFile[] {
+	const compileData = transform(spec, target.transformOptions)
 	const compile: Compile = resolveCompiler(target.name)
 	const result = compile(compileData, target.compilerOptions)
 
