@@ -6,9 +6,9 @@ import { IAdapter } from './types'
 import { {{api.className}} } from './apis/{{api.name}}'
 {{/each}}
 
-export class {{clientClassName}} {
+export class {{clientClassName}}<O = any> {
 	{{#each apis as |api|}}
-	{{api.name}}: {{api.className}}
+	{{api.name}}: {{api.className}}<O>
 	{{/each}}
 
 	constructor(adapter: IAdapter) {

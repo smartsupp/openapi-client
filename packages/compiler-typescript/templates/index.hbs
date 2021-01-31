@@ -1,18 +1,11 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { IAdapter } from './types'
-import { {{clientClassName}} } from './client'
-
 export * from './types'
 export * from './client'
 {{#each apis as |api|}}
 export * from './apis/{{api.name}}'
 {{/each}}
-
-export function createClient(adapter: IAdapter): {{clientClassName}} {
-	return new {{clientClassName}}(adapter)
-}
 
 // default export all
 import * as _export from '.'

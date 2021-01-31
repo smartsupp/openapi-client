@@ -7,18 +7,34 @@ export default {
 	ifEquals: (arg1, arg2, options) => {
 		return arg1 === arg2 ? options.fn(this) : options.inverse(this)
 	},
+
 	json: (data: any) => {
 		return JSON.stringify(data, null, 2)
 	},
+
 	pascalCase: (options) => {
 		return pascalCase(options.fn(this))
 	},
+
 	camelCase: (options) => {
 		return camelCase(options.fn(this))
 	},
+
 	propType: (context: string | string[]) => {
 		return expandType(context)
 	},
+
+	enumName: (context: string) => {
+		let enumName = `${context}`
+		if (enumName.toUpperCase() !== enumName) {
+			enumName = pascalCase(`${context}`)
+		}
+		if (enumName.match(/^[0-9].*/)) {
+			enumName = '_' + enumName
+		}
+		return enumName
+	},
+
 	enumValue: (context: string | number | boolean) => {
 		if (typeof context === 'string') {
 			return `'${context}'`
@@ -26,20 +42,22 @@ export default {
 			return context
 		}
 	},
+
 	opParams: (context: CompileData.Operation, options) => {
 		const ret = []
 		for (const param of context.params) {
 			ret.push(`${param.name}: ${expandType(param.type, options.data.root)}`)
 		}
 		if (context.body) {
-			ret.push(`body: ${expandType(context.body.type, options.data.root)}`)
+			ret.push(`body${context.body.required ? '' : '?'}: ${expandType(context.body.type, options.data.root)}`)
 		}
 		if (context.query) {
-			ret.push(`query: ${expandType(context.query.type, options.data.root)}`)
+			ret.push(`query${context.query.required ? '' : '?'}: ${expandType(context.query.type, options.data.root)}`)
 		}
-		ret.push('options?')
+		ret.push('options?: O')
 		return ret.join(', ')
 	},
+
 	opArgs: (context: CompileData.Operation) => {
 		return [
 			`'${context.method}'`,
@@ -49,9 +67,18 @@ export default {
 			'options',
 		].join(', ')
 	},
+
 	opResponse: (context: CompileData.Operation, options) => {
 		if (context.response) {
-			return expandType(context.response.type, options.data.root)
+			return `${expandType(context.response.type, options.data.root)}${context.response.required ? '' : ' | null'}`
+		} else {
+			return 'void'
+		}
+	},
+
+	opResponseRaw: (context: CompileData.Operation, options) => {
+		if (context.response) {
+			return `${expandType(context.response.type, options.data.root)}`
 		} else {
 			return 'void'
 		}

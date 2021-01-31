@@ -1,15 +1,37 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import * as types from '../types';
+import * as types from '../types'
 
-export class {{className}} {
-	constructor(
-		private adapter: types.IAdapter
-	) {
+function toData(res) {
+	return res.data
+}
+
+export class {{className}}<O> {
+	raw: {{className}}Raw<O>
+	constructor(public adapter: types.IAdapter) {
+		this.raw = new {{className}}Raw(this.adapter)
 	}
 	{{#each api.operations as |op|}}
 	{{#camelCase}}{{op.name}}{{/camelCase}}({{#opParams op}}{{/opParams}}): Promise<{{#opResponse op}}{{/opResponse}}> {
+		return this.adapter.request({{#opArgs op}}{{/opArgs}}).then(toData)
+		{{#unless op.response.required}}
+			.catch((err) => {
+				if (err.status === 404) {
+					return null
+				} else {
+					throw err
+				}
+			})
+		{{/unless}}
+	}
+	{{/each}}
+}
+
+export class {{className}}Raw<O> {
+	constructor(public adapter: types.IAdapter) {}
+	{{#each api.operations as |op|}}
+	{{#camelCase}}{{op.name}}{{/camelCase}}({{#opParams op}}{{/opParams}}): Promise<types.AdapterResponse<{{#opResponseRaw op}}{{/opResponseRaw}}>> {
 		return this.adapter.request({{#opArgs op}}{{/opArgs}})
 	}
 	{{/each}}

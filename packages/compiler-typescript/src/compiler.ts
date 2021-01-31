@@ -19,6 +19,8 @@ export interface CompilerOptions {
 	npmPublishConfig?: any
 	tsTarget?: string
 	clientClass?: string
+	// default false
+	nativeEnum?: boolean
 }
 
 for (const name in helpers) {
@@ -43,7 +45,7 @@ export class Compiler {
 		const result: CompiledFile[] = []
 		result.push({
 			path: 'src/types.ts',
-			data: this.compileTypes(data),
+			data: this.compileTypes(data, options),
 		})
 		for (const api of data.apis) {
 			result.push({
@@ -78,12 +80,15 @@ export class Compiler {
 		return result
 	}
 
-	compileTypes(data: CompileData.Data): string {
+	compileTypes(data: CompileData.Data, options: CompilerOptions): string {
 		return renderTemplate(this.getTemplate('types'), {
+			nativeEnum: options.nativeEnum || false,
 			...data,
 		}, 'typescript')
-			.replace(/{\n+/gm, '{\n') // remove new lines after namespace
 			.replace(/}\nexport/gm, '}\n\nexport') // add missing new lines before export
+			.replace(/(\s*export enum)/g, '\n$1') // add missing new lines before export
+			.replace(/{\n+/gm, '{\n') // remove new lines after namespace
+			.replace(/\n\n\n+/gm, '\n\n') // remove multiple new lines
 	}
 
 	compileApi(data: CompileData.Data, api: CompileData.Api): string {
@@ -92,6 +97,8 @@ export class Compiler {
 			className: pascalCase(api.name) + 'Client',
 			namespace: pascalCase(api.name) + 'Api',
 		}, 'typescript')
+			.replace(/(\t(\w+)\()/g, '\n$1') // add new lines before methods
+			.replace(/{\n+\tconstructor/gm, '{\n\tconstructor') // remove new lines before constructor
 	}
 
 	compileClient(data: CompileData.Data, options: CompilerOptions): string {
