@@ -10,7 +10,7 @@ const TEMPLATES_DIR = __dirname + '/../templates'
 const DEFAULT_TS_TARGET = 'es2017'
 
 export interface CompilerOptions {
-	npmName: string
+	npmName?: string
 	npmAuthor?: string
 	npmVersion?: string
 	npmLicense?: string
@@ -41,7 +41,7 @@ export class Compiler {
 		return this.templates.get(name)
 	}
 
-	compile(data: CompileData.Data, options: CompilerOptions): CompiledFile[] {
+	compile(data: CompileData.Data, options: CompilerOptions = {}): CompiledFile[] {
 		const result: CompiledFile[] = []
 		result.push({
 			path: 'src/types.ts',
@@ -80,7 +80,7 @@ export class Compiler {
 		return result
 	}
 
-	compileTypes(data: CompileData.Data, options: CompilerOptions): string {
+	compileTypes(data: CompileData.Data, options: CompilerOptions = {}): string {
 		return renderTemplate(this.getTemplate('types'), {
 			nativeEnum: options.nativeEnum || false,
 			...data,
@@ -100,7 +100,7 @@ export class Compiler {
 			.replace(/{\n+\tconstructor/gm, '{\n\tconstructor') // remove new lines before constructor
 	}
 
-	compileClient(data: CompileData.Data, options: CompilerOptions): string {
+	compileClient(data: CompileData.Data, options: CompilerOptions = {}): string {
 		return renderTemplate(this.getTemplate('client'), {
 			clientClassName: options.clientClass || 'Client',
 			apis: data.apis.map((api: CompileData.Api) => ({
@@ -110,7 +110,7 @@ export class Compiler {
 		}, 'typescript')
 	}
 
-	compileIndex(data: CompileData.Data, options: CompilerOptions): string {
+	compileIndex(data: CompileData.Data, options: CompilerOptions = {}): string {
 		return renderTemplate(this.getTemplate('index'), {
 			clientClassName: options.clientClass || 'Client',
 			apis: data.apis.map((api: CompileData.Api) => ({
@@ -120,9 +120,9 @@ export class Compiler {
 		}, 'typescript')
 	}
 
-	compilePackage(data: CompileData.Data, options: CompilerOptions): string {
+	compilePackage(data: CompileData.Data, options: CompilerOptions = {}): string {
 		return renderTemplate(this.getTemplate('package'), {
-			name: options.npmName,
+			name: options.npmName || 'openapi',
 			author: options.npmAuthor,
 			homepage: options.npmHomepage,
 			repository: options.npmRepository,
@@ -137,15 +137,15 @@ export class Compiler {
 		return renderTemplate(this.getTemplate('npmignore'))
 	}
 
-	compileTsconfig(options: CompilerOptions): string {
+	compileTsconfig(options: CompilerOptions = {}): string {
 		return renderTemplate(this.getTemplate('tsconfig'), {
 			target: options.tsTarget || DEFAULT_TS_TARGET,
 		})
 	}
 
-	compileReadme(data: CompileData.Data, options: CompilerOptions): string {
+	compileReadme(data: CompileData.Data, options: CompilerOptions = {}): string {
 		return renderTemplate(this.getTemplate('readme'), {
-			name: options.npmName,
+			name: options.npmName || 'openapi',
 			description: data.info.description,
 		}).replace(/\n\n\n+/gm, '\n\n')
 	}
