@@ -26,6 +26,7 @@ export namespace CompileData {
 		name: string
 		properties?: Property[]
 		additionalType?: string | string[]
+		extends?: string
 		values?: any[]
 	}
 
