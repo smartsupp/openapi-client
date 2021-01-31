@@ -3,10 +3,6 @@
 
 import * as types from '../types'
 
-function toData(res) {
-	return res.data
-}
-
 export class {{className}}<O> {
 	raw: {{className}}Raw<O>
 	constructor(public adapter: types.IAdapter) {
@@ -35,4 +31,10 @@ export class {{className}}Raw<O> {
 		return this.adapter.request({{#opArgs op}}{{/opArgs}})
 	}
 	{{/each}}
+}
+
+// helpers
+
+function toData(res) {
+	return res.data
 }

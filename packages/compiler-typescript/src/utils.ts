@@ -20,8 +20,7 @@ export function pretify(output: string, parser: prettier.BuiltInParserName): str
 		parser,
 	}
 	return prettier.format(output, options)
-		.replace(/^\s*\n/gm, '')
-		.replace(/^(\t*export\s(namespace|interface|class)(.*))$/gm, '\n$1')
+		.replace(/\n\n\n+/gm, '\n\n') // remove multiple new lines
 }
 
 export function expandType(type: string | string[], data?: FormatTypeContext): string {

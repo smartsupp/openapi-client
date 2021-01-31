@@ -86,9 +86,8 @@ export class Compiler {
 			...data,
 		}, 'typescript')
 			.replace(/}\nexport/gm, '}\n\nexport') // add missing new lines before export
-			.replace(/(\s*export enum)/g, '\n$1') // add missing new lines before export
+			.replace(/^(\t+export\s(interface|class|enum)(.*))$/gm, '\n$1') // add missing new lines before export in namespace
 			.replace(/{\n+/gm, '{\n') // remove new lines after namespace
-			.replace(/\n\n\n+/gm, '\n\n') // remove multiple new lines
 	}
 
 	compileApi(data: CompileData.Data, api: CompileData.Api): string {
@@ -131,6 +130,7 @@ export class Compiler {
 			license: options.npmLicense || data.info.license?.name || '',
 			publishConfig: options.npmPublishConfig,
 		}, 'json')
+			.replace(/\n\n+/gm, '\n') // remove multiple new lines
 	}
 
 	compileNpmignore(): string {
