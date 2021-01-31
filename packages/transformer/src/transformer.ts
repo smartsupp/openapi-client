@@ -17,10 +17,10 @@ export interface TransformOptions {
 export class Transformer {
 	private data: CompileData.Data
 	private options: TransformOptions
+	private spec: OpenAPIV3.Document
 
-	constructor(
-		private spec: OpenAPIV3.Document,
-	) {
+	constructor(spec: OpenAPIV3.Document) {
+		this.spec = JSON.parse(JSON.stringify(spec)) // clone spec because of internal modifications
 	}
 
 	transform(options: TransformOptions = {}): CompileData.Data {
