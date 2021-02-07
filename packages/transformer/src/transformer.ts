@@ -12,6 +12,7 @@ interface ApiOperation {
 
 export interface TransformOptions {
 	requestBodyRequiredPropsWithDefaults?: boolean
+	requestQueryRequiredPropsWithDefaults?: boolean
 }
 
 export class Transformer {
@@ -322,9 +323,11 @@ export class Transformer {
 				prop.type.push('null')
 			}
 		}
-		if (this.options.requestBodyRequiredPropsWithDefaults) {
+		if (defName && schema.hasOwnProperty('default')) {
 			// When used on server defaults are filled by schema, then default values always exists and can be set as required for interface.
-			if (defName && defName.includes('Body') && schema.hasOwnProperty('default')) {
+			if (defName.includes('Body') && this.options.requestBodyRequiredPropsWithDefaults) {
+				prop.required = true
+			} else if (defName.includes('Query') && this.options.requestQueryRequiredPropsWithDefaults) {
 				prop.required = true
 			}
 		}
