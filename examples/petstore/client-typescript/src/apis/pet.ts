@@ -31,29 +31,11 @@ export class PetClient<O> {
 	}
 
 	updatePetWithForm(petId: number, query?: types.PetApi.UpdatePetWithFormQuery, options?: O): Promise<void> {
-		return this.adapter
-			.request('post', `/pet/${petId}`, null, query, options)
-			.then(toData)
-			.catch((err) => {
-				if (err.status === 404) {
-					return null
-				} else {
-					throw err
-				}
-			})
+		return this.adapter.request('post', `/pet/${petId}`, null, query, options).then(toData)
 	}
 
 	deletePet(petId: number, options?: O): Promise<void> {
-		return this.adapter
-			.request('delete', `/pet/${petId}`, null, null, options)
-			.then(toData)
-			.catch((err) => {
-				if (err.status === 404) {
-					return null
-				} else {
-					throw err
-				}
-			})
+		return this.adapter.request('delete', `/pet/${petId}`, null, null, options).then(toData)
 	}
 }
 

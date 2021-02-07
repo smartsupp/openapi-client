@@ -11,16 +11,7 @@ export class UserClient<O> {
 	}
 
 	createUser(body?: types.User, options?: O): Promise<void> {
-		return this.adapter
-			.request('post', `/user`, body, null, options)
-			.then(toData)
-			.catch((err) => {
-				if (err.status === 404) {
-					return null
-				} else {
-					throw err
-				}
-			})
+		return this.adapter.request('post', `/user`, body, null, options).then(toData)
 	}
 
 	createUsersWithListInput(body?: types.User[], options?: O): Promise<types.User> {
@@ -32,16 +23,7 @@ export class UserClient<O> {
 	}
 
 	logoutUser(options?: O): Promise<void> {
-		return this.adapter
-			.request('get', `/user/logout`, null, null, options)
-			.then(toData)
-			.catch((err) => {
-				if (err.status === 404) {
-					return null
-				} else {
-					throw err
-				}
-			})
+		return this.adapter.request('get', `/user/logout`, null, null, options).then(toData)
 	}
 
 	getUserByName(username: string, options?: O): Promise<types.User> {
@@ -49,29 +31,11 @@ export class UserClient<O> {
 	}
 
 	updateUser(username: string, body?: types.User, options?: O): Promise<void> {
-		return this.adapter
-			.request('put', `/user/${username}`, body, null, options)
-			.then(toData)
-			.catch((err) => {
-				if (err.status === 404) {
-					return null
-				} else {
-					throw err
-				}
-			})
+		return this.adapter.request('put', `/user/${username}`, body, null, options).then(toData)
 	}
 
 	deleteUser(username: string, options?: O): Promise<void> {
-		return this.adapter
-			.request('delete', `/user/${username}`, null, null, options)
-			.then(toData)
-			.catch((err) => {
-				if (err.status === 404) {
-					return null
-				} else {
-					throw err
-				}
-			})
+		return this.adapter.request('delete', `/user/${username}`, null, null, options).then(toData)
 	}
 }
 

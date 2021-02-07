@@ -23,16 +23,7 @@ export class StoreClient<O> {
 	}
 
 	deleteOrder(orderId: number, options?: O): Promise<void> {
-		return this.adapter
-			.request('delete', `/store/order/${orderId}`, null, null, options)
-			.then(toData)
-			.catch((err) => {
-				if (err.status === 404) {
-					return null
-				} else {
-					throw err
-				}
-			})
+		return this.adapter.request('delete', `/store/order/${orderId}`, null, null, options).then(toData)
 	}
 }
 
