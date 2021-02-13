@@ -34,6 +34,7 @@ export interface {{definition.name}}{{#if definition.extends}} extends {{definit
 	{{#if definition.additionalType}}[keyof: string]: {{#propType definition.additionalType}}{{/propType}}{{/if}}
 }
 {{/ifEquals}}
+
 {{/each}}
 {{/inline}}
 
