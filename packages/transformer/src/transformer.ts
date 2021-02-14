@@ -1,14 +1,8 @@
 import { CompileData } from '@openapi-client/compiler-types'
 import { OpenAPIV3 } from 'openapi-types'
 import { pascalCase } from 'pascal-case'
-import { isAllOfSchemaExtendable, mergeSchemas } from './helpers'
 import * as extensions from './extenstions'
-
-interface ApiOperation {
-	path: string,
-	method: string,
-	operation: OpenAPIV3.OperationObject
-}
+import { isAllOfSchemaExtendable, mergeSchemas } from './helpers'
 
 export interface TransformOptions {
 	requestBodyRequiredPropsWithDefaults?: boolean
@@ -199,12 +193,16 @@ export class Transformer {
 			if (!(schema as OpenAPIV3.ReferenceObject).$ref) {
 				const definitions: CompileData.Definition[] = []
 				const definition = this.transformDefinition(schema as OpenAPIV3.SchemaObject, '', definitions)
-				this.data.definitions.push(definition, ...definitions)
+				if (definition) this.data.definitions.push(definition)
+				this.data.definitions.push(...definitions)
 			}
 		}
 	}
 
-	transformDefinition(schema: OpenAPIV3.SchemaObject, name: string = '', definitions: CompileData.Definition[], parentSchema?: OpenAPIV3.ReferenceObject): CompileData.Definition {
+	transformDefinition(schema: OpenAPIV3.SchemaObject & SchemaObjectExtend, name: string = '', definitions: CompileData.Definition[], parentSchema?: OpenAPIV3.ReferenceObject): CompileData.Definition | null {
+		if (schema._transformed) return null
+		schema._transformed = true
+
 		const definition: CompileData.Definition = {
 			type: null,
 			name: pascalCase(schema.title || name),
@@ -268,6 +266,25 @@ export class Transformer {
 
 		if (parentSchema) {
 			definition.extends = this.derefSchema(parentSchema).title
+		}
+
+		if (schema.discriminator && schema.discriminator.mapping) {
+			for (const prop in schema.discriminator.mapping) {
+				const ref = schema.discriminator.mapping[prop]
+				const refSchema = this.derefSchema({ $ref: ref })
+				let refDefinition = this.data.definitions.find((def) => {
+					return def.name === refSchema.title
+				})
+				if (!refDefinition) {
+					refDefinition = this.transformDefinition(refSchema, '', definitions)
+					definitions.push(refDefinition)
+				}
+				refDefinition.properties.unshift({
+					name: schema.discriminator.propertyName,
+					type: `"${prop}"`,
+					required: true,
+				})
+			}
 		}
 
 		return definition
@@ -427,4 +444,14 @@ export class Transformer {
 		}
 		return this.spec.components[from][name]
 	}
+}
+
+interface ApiOperation {
+	path: string,
+	method: string,
+	operation: OpenAPIV3.OperationObject
+}
+
+interface SchemaObjectExtend {
+	_transformed?: boolean
 }
