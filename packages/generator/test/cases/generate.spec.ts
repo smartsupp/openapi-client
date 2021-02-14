@@ -9,7 +9,6 @@ describe('generate client', () => {
 				npmName: 'swagger-petstore-client',
 				npmAuthor: 'Swagger',
 				clientClass: 'SwaggerPetstoreClient',
-				nativeEnum: true,
 			},
 		}])
 	})
