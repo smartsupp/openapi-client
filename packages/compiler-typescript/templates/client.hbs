@@ -11,9 +11,13 @@ export class {{clientClassName}}<O = any> {
 	{{api.name}}: {{api.className}}<O>
 	{{/each}}
 
-	constructor(adapter: IAdapter) {
+	constructor(public adapter: IAdapter) {
 		{{#each apis as |api|}}
 		this.{{api.name}} = new {{api.className}}(adapter)
 		{{/each}}
+	}
+
+	withOptions(o: O): {{clientClassName}} {
+		return new {{clientClassName}}(this.adapter.withOptions(o))
 	}
 }

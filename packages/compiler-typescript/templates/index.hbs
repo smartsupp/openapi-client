@@ -7,6 +7,6 @@ export * from './client'
 export * from './apis/{{api.name}}'
 {{/each}}
 
-// default export all
-import * as _export from '.'
-export default _export
+// default export main class
+import { {{clientClassName}} } from './client'
+export default {{clientClassName}}

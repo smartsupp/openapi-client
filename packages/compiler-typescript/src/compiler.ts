@@ -149,6 +149,7 @@ export class Compiler {
 		return renderTemplate(this.getTemplate('readme'), {
 			name: options.npmName || 'openapi',
 			description: data.info.description,
+			clientClassName: options.clientClass || 'Client',
 		}).replace(/\n\n\n+/gm, '\n\n')
 	}
 }

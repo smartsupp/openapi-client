@@ -11,9 +11,10 @@ npm install {{name}} --save
 ## Usage
 
 ```typescript
-import { createClient } from '{{name}}'
+import {{clientClassName}} from '{{name}}'
 
-const client = createClient(somehowCreateAdapter())
+const adapter = somehowCreateAdapter()
+const client = new {{clientClassName}}(adapter)
 // now you can use client instance
 ```
 
