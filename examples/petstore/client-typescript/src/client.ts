@@ -11,9 +11,13 @@ export class SwaggerPetstoreClient<O = any> {
 	store: StoreClient<O>
 	user: UserClient<O>
 
-	constructor(adapter: IAdapter) {
+	constructor(public adapter: IAdapter) {
 		this.pet = new PetClient(adapter)
 		this.store = new StoreClient(adapter)
 		this.user = new UserClient(adapter)
+	}
+
+	withOptions(o: O): SwaggerPetstoreClient {
+		return new SwaggerPetstoreClient(this.adapter.withOptions(o))
 	}
 }

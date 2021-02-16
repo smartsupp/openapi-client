@@ -7,6 +7,6 @@ export * from './apis/pet'
 export * from './apis/store'
 export * from './apis/user'
 
-// default export all
-import * as _export from '.'
-export default _export
+// default export main class
+import { SwaggerPetstoreClient } from './client'
+export default SwaggerPetstoreClient

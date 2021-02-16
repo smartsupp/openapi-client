@@ -18,9 +18,10 @@ npm install swagger-petstore-client --save
 ## Usage
 
 ```typescript
-import { createClient } from 'swagger-petstore-client'
+import SwaggerPetstoreClient from 'swagger-petstore-client'
 
-const client = createClient(somehowCreateAdapter())
+const adapter = somehowCreateAdapter()
+const client = new SwaggerPetstoreClient(adapter)
 // now you can use client instance
 ```
 

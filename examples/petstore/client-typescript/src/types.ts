@@ -10,6 +10,7 @@ export interface AdapterResponse<T> {
 
 export interface IAdapter {
 	request<T = any>(method: string, path: string, body?: any, query?: any, options?: any): Promise<AdapterResponse<T>>
+	withOptions(options: any): IAdapter
 }
 
 export interface Order {
