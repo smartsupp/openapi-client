@@ -7,16 +7,16 @@
 {{#if @root.nativeEnum}}
 export enum {{definition.name}} {
 	{{#each definition.values as |value|}}
-	{{#enumName value}}{{/enumName}} = '{{value}}',
+	{{#enumName value}}{{/enumName}} = {{#enumValue value}}{{/enumValue}},
 	{{/each}}
 }
 {{else}}
-export const {{definition.name}}Enum = {
+export const {{definition.name}} = {
 	{{#each definition.values as |value|}}
-	'{{value}}': {{#enumValue value}}{{/enumValue}},
+	{{#enumName value}}{{/enumName}}: {{#enumValue value}}{{/enumValue}},
 	{{/each}}
 } as const
-export type {{definition.name}} = typeof {{definition.name}}Enum[keyof typeof {{definition.name}}Enum]
+export type {{definition.name}} = typeof {{definition.name}}[keyof typeof {{definition.name}}]
 {{/if}}
 {{/ifEquals}}
 {{#ifEquals definition.type 'type'}}
