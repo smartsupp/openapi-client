@@ -23,12 +23,12 @@ export interface Order {
 	complete?: boolean
 }
 
-export const OrderStatusEnum = {
-	placed: 'placed',
-	approved: 'approved',
-	delivered: 'delivered',
+export const OrderStatus = {
+	Placed: 'placed',
+	Approved: 'approved',
+	Delivered: 'delivered',
 } as const
-export type OrderStatus = typeof OrderStatusEnum[keyof typeof OrderStatusEnum]
+export type OrderStatus = typeof OrderStatus[keyof typeof OrderStatus]
 
 export interface Customer {
 	id?: number
@@ -75,12 +75,12 @@ export interface Pet {
 	status?: PetStatus
 }
 
-export const PetStatusEnum = {
-	available: 'available',
-	pending: 'pending',
-	sold: 'sold',
+export const PetStatus = {
+	Available: 'available',
+	Pending: 'pending',
+	Sold: 'sold',
 } as const
-export type PetStatus = typeof PetStatusEnum[keyof typeof PetStatusEnum]
+export type PetStatus = typeof PetStatus[keyof typeof PetStatus]
 
 export interface ApiResponse {
 	code?: number
@@ -89,12 +89,12 @@ export interface ApiResponse {
 }
 
 export namespace PetApi {
-	export const FindPetsByStatusQueryStatusEnum = {
-		available: 'available',
-		pending: 'pending',
-		sold: 'sold',
+	export const FindPetsByStatusQueryStatus = {
+		Available: 'available',
+		Pending: 'pending',
+		Sold: 'sold',
 	} as const
-	export type FindPetsByStatusQueryStatus = typeof FindPetsByStatusQueryStatusEnum[keyof typeof FindPetsByStatusQueryStatusEnum]
+	export type FindPetsByStatusQueryStatus = typeof FindPetsByStatusQueryStatus[keyof typeof FindPetsByStatusQueryStatus]
 
 	export interface FindPetsByStatusQuery {
 		/** Status values that need to be considered for filter */
