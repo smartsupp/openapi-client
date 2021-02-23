@@ -279,6 +279,9 @@ export class Transformer {
 					refDefinition = this.transformDefinition(refSchema, '', definitions)
 					definitions.push(refDefinition)
 				}
+				refDefinition.properties = refDefinition.properties.filter((prop) => {
+					return prop.name !== schema.discriminator.propertyName
+				})
 				refDefinition.properties.unshift({
 					name: schema.discriminator.propertyName,
 					type: `"${prop}"`,
