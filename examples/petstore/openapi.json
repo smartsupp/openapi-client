@@ -902,6 +902,11 @@
                             "placed",
                             "approved",
                             "delivered"
+                        ],
+                        "x-enum-names": [
+                            "PLACED",
+                            "APPROVED",
+                            "DELIVERED"
                         ]
                     },
                     "complete": {

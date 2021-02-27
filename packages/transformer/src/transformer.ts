@@ -222,7 +222,7 @@ export class Transformer {
 			}
 
 		} else if (schema.enum) {
-			const names = schema[X_ENUM_NAMES] || schema.enum
+			const names = schema[X_ENUM_NAMES] || []
 			const values = [...schema.enum]
 			if (values.includes(null)) {
 				values.splice(values.indexOf(null), 1)

@@ -30,7 +30,7 @@ export default {
 		}
 		let enumName = `${context.value}`
 		if (enumName.toUpperCase() !== enumName) {
-			enumName = pascalCase(`${context}`)
+			enumName = pascalCase(`${context.value}`)
 		}
 		if (enumName.match(/^[0-9].*/)) {
 			enumName = '_' + enumName
