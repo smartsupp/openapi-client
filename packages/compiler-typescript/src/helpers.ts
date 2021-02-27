@@ -24,8 +24,11 @@ export default {
 		return expandType(context)
 	},
 
-	enumName: (context: string) => {
-		let enumName = `${context}`
+	enumName: (context: CompileData.Enum) => {
+		if (context.name) {
+			return context.name
+		}
+		let enumName = `${context.value}`
 		if (enumName.toUpperCase() !== enumName) {
 			enumName = pascalCase(`${context}`)
 		}
@@ -35,11 +38,11 @@ export default {
 		return enumName
 	},
 
-	enumValue: (context: string | number | boolean) => {
-		if (typeof context === 'string') {
-			return `'${context}'`
+	enumValue: (context: CompileData.Enum) => {
+		if (typeof context.value === 'string') {
+			return `'${context.value}'`
 		} else {
-			return context
+			return context.value
 		}
 	},
 

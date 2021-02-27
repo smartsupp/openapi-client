@@ -6,14 +6,14 @@
 {{#ifEquals definition.type 'enum'}}
 {{#if @root.nativeEnum}}
 export enum {{definition.name}} {
-	{{#each definition.values as |value|}}
-	{{#enumName value}}{{/enumName}} = {{#enumValue value}}{{/enumValue}},
+	{{#each definition.enum as |enumObj|}}
+	{{#enumName enumObj}}{{/enumName}} = {{#enumValue enumObj}}{{/enumValue}},
 	{{/each}}
 }
 {{else}}
 export const {{definition.name}} = {
-	{{#each definition.values as |value|}}
-	{{#enumName value}}{{/enumName}}: {{#enumValue value}}{{/enumValue}},
+	{{#each definition.enum as |enumObj|}}
+	{{#enumName enumObj}}{{/enumName}}: {{#enumValue enumObj}}{{/enumValue}},
 	{{/each}}
 } as const
 export type {{definition.name}} = typeof {{definition.name}}[keyof typeof {{definition.name}}]
