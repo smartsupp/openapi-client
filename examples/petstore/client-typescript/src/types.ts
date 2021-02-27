@@ -24,9 +24,9 @@ export interface Order {
 }
 
 export const OrderStatus = {
-	Placed: 'placed',
-	Approved: 'approved',
-	Delivered: 'delivered',
+	PLACED: 'placed',
+	APPROVED: 'approved',
+	DELIVERED: 'delivered',
 } as const
 export type OrderStatus = typeof OrderStatus[keyof typeof OrderStatus]
 

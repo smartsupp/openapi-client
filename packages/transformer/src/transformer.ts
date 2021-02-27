@@ -3,6 +3,7 @@ import { OpenAPIV3 } from 'openapi-types'
 import { pascalCase } from 'pascal-case'
 import * as extensions from './extenstions'
 import { isAllOfSchemaExtendable, mergeSchemas } from './helpers'
+import { X_ENUM_NAMES } from './extenstions'
 
 export interface TransformOptions {
 	requestBodyRequiredPropsWithDefaults?: boolean
@@ -221,11 +222,16 @@ export class Transformer {
 			}
 
 		} else if (schema.enum) {
-			definition.type = 'enum'
-			definition.values = schema.enum
-			if (definition.values.includes(null)) {
-				definition.values.splice(definition.values.indexOf(null), 1)
+			const names = schema[X_ENUM_NAMES] || []
+			const values = [...schema.enum]
+			if (values.includes(null)) {
+				values.splice(values.indexOf(null), 1)
 			}
+			definition.type = 'enum'
+			definition.enum = values.map((value, index) => ({
+				value,
+				name: names[index] || null,
+			}))
 
 		} else if (schema.allOf) {
 			if (isAllOfSchemaExtendable(schema)) {

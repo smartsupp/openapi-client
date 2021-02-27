@@ -28,6 +28,12 @@ export namespace CompileData {
 		additionalType?: string | string[]
 		extends?: string
 		values?: any[]
+		enum?: Enum[]
+	}
+
+	export interface Enum {
+		name: string | null
+		value: string | number | boolean
 	}
 
 	export interface Property {
