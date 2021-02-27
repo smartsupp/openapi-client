@@ -1,6 +1,6 @@
 {
   "name": "@openapi-client/compiler-typescript",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Generate typescript client",
   "repository": "https://github.com/smartsupp/openapi-client.git",
   "homepage": "https://github.com/smartsupp/openapi-client/tree/master/packages/compiler-typescript",
@@ -12,7 +12,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@openapi-client/compiler-types": "^0.1.3",
+    "@openapi-client/compiler-types": "^0.1.4",
     "camel-case": "^4.1.2",
     "handlebars": "^4.7.6",
     "pascal-case": "^3.1.2",
