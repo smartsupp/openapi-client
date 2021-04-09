@@ -909,6 +909,12 @@
                             "DELIVERED"
                         ]
                     },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "primary"
+                        ]
+                    },
                     "complete": {
                         "type": "boolean"
                     }

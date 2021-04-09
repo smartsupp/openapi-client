@@ -380,10 +380,13 @@ export class Transformer {
 	}
 
 	transformTypeFromSchema(schema: OpenAPIV3.SchemaObject, defName: string, definitions: CompileData.Definition[]): string | string[] {
-		if (schema.type === 'object' || schema.enum) {
+		if (schema.type === 'object' || schema.enum && schema.enum.length > 1) {
 			const definition = this.transformDefinition(schema, defName, definitions)
 			definitions.push(definition)
 			return definition.name
+
+		} else if (schema.enum && schema.enum.length === 1 && typeof schema.enum[0] === 'string') {
+			return `"${schema.enum[0]}"`
 
 		} else if (schema.type === 'array') {
 			const type = this.transformType(schema.items, defName, definitions)
