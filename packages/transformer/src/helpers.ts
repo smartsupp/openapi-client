@@ -33,3 +33,11 @@ export function isAllOfSchemaExtendable(schema: OpenAPIV3.SchemaObject): boolean
 	}
 	return true
 }
+
+export function assignSchemaExtensionProps(target: OpenAPIV3.SchemaObject, source: OpenAPIV3.SchemaObject): void {
+	for (const prop in source) {
+		if (prop.startsWith('x-')) {
+			target[prop] = source[prop]
+		}
+	}
+}

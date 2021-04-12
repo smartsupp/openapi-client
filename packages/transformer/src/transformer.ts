@@ -2,8 +2,8 @@ import { CompileData } from '@openapi-client/compiler-types'
 import { OpenAPIV3 } from 'openapi-types'
 import { pascalCase } from 'pascal-case'
 import * as extensions from './extenstions'
-import { isAllOfSchemaExtendable, mergeSchemas } from './helpers'
-import { X_ENUM_NAMES } from './extenstions'
+import { assignSchemaExtensionProps, isAllOfSchemaExtendable, mergeSchemas } from './helpers'
+import { X_ENUM_NAMES, X_GENERATOR_NAMESPACE, X_GENERATOR_TYPE, X_NAMESPACE } from './extenstions'
 
 export interface TransformOptions {
 	requestBodyRequiredPropsWithDefaults?: boolean
@@ -176,19 +176,23 @@ export class Transformer {
 
 	resolveSchemaType(schema: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject, name: string, definitions: CompileData.Definition[]) {
 		if ((schema as OpenAPIV3.ReferenceObject).$ref) {
-			return '#' + this.derefSchema(schema).title
+			return '#' + this.derefSchema(schema)._definitionName
 		} else {
 			return this.transformTypeFromSchema(schema as OpenAPIV3.SchemaObject, name, definitions)
 		}
 	}
 
 	transformDefinitions() {
+		// prepare schemas data
 		for (const key in this.spec.components.schemas) {
 			const schema: any = this.spec.components.schemas[key]
 			if (!schema.$ref) {
 				schema.title = pascalCase(schema.title ? schema.title : key)
+				schema._definitionName = this.getDefinitionName(schema)
 			}
 		}
+
+		// process schemas
 		for (const key in this.spec.components.schemas) {
 			const schema = this.spec.components.schemas[key]
 			if (!(schema as OpenAPIV3.ReferenceObject).$ref) {
@@ -206,7 +210,7 @@ export class Transformer {
 
 		const definition: CompileData.Definition = {
 			type: null,
-			name: pascalCase(schema.title || name),
+			name: this.getDefinitionName(schema, name),
 		}
 		if (!definition.name) {
 			throw new Error('Definition name was unable to generate. Must be passed manually')
@@ -238,11 +242,13 @@ export class Transformer {
 				const [refSchema, ...otherSchemas] = schema.allOf
 				const schemas = otherSchemas.map(this.derefSchema.bind(this))
 				const mergedSchema = mergeSchemas(schemas)
+				assignSchemaExtensionProps(mergedSchema, schema)
 				mergedSchema.title = schema.title || mergedSchema.title
 				return this.transformDefinition(mergedSchema, definition.name, definitions, refSchema as OpenAPIV3.ReferenceObject)
 			} else {
 				const schemas = schema.allOf.map(this.derefSchema.bind(this))
 				const mergedSchema = mergeSchemas(schemas)
+				assignSchemaExtensionProps(mergedSchema, schema)
 				mergedSchema.title = schema.title || mergedSchema.title
 				return this.transformDefinition(mergedSchema, definition.name, definitions)
 			}
@@ -271,7 +277,7 @@ export class Transformer {
 		}
 
 		if (parentSchema) {
-			definition.extends = this.derefSchema(parentSchema).title
+			definition.extends = this.derefSchema(parentSchema)._definitionName
 		}
 
 		if (schema.discriminator && schema.discriminator.mapping) {
@@ -279,7 +285,7 @@ export class Transformer {
 				const ref = schema.discriminator.mapping[prop]
 				const refSchema = this.derefSchema({ $ref: ref })
 				let refDefinition = this.data.definitions.find((def) => {
-					return def.name === refSchema.title
+					return def.name === refSchema._definitionName
 				})
 				if (!refDefinition) {
 					refDefinition = this.transformDefinition(refSchema, '', definitions)
@@ -323,7 +329,7 @@ export class Transformer {
 		const schema = this.derefSchema(ref)
 		const prop: CompileData.Property = {
 			name,
-			type: schema.title,
+			type: schema._definitionName,
 			required: false,
 			description: schema.description || '',
 		}
@@ -371,7 +377,7 @@ export class Transformer {
 	}
 
 	transformTypeFromRef(ref: OpenAPIV3.ReferenceObject, defName: string): string {
-		const type = this.derefSchema(ref).title
+		const type = this.derefSchema(ref)._definitionName
 		if (defName && !type.includes(defName)) {
 			return '#' + type
 		} else {
@@ -401,7 +407,7 @@ export class Transformer {
 
 		} else if (schema.allOf) {
 			if (schema.allOf.length === 1 && (schema.allOf[0] as OpenAPIV3.ReferenceObject).$ref) {
-				return this.derefSchema(schema.allOf[0] as OpenAPIV3.ReferenceObject).title
+				return this.derefSchema(schema.allOf[0] as OpenAPIV3.ReferenceObject)._definitionName
 			} else {
 				const definition = this.transformDefinition(schema, defName, definitions)
 				definitions.push(definition)
@@ -434,7 +440,7 @@ export class Transformer {
 		return this.derefObject(paramOrRef, 'parameters') as OpenAPIV3.ParameterObject
 	}
 
-	derefSchema(schemaOrRef: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject): OpenAPIV3.SchemaObject {
+	derefSchema(schemaOrRef: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject): OpenAPIV3.SchemaObject & SchemaObjectExtend {
 		return this.derefObject(schemaOrRef, 'schemas') as OpenAPIV3.SchemaObject
 	}
 
@@ -456,6 +462,28 @@ export class Transformer {
 		}
 		return this.spec.components[from][name]
 	}
+
+	getDefinitionName(schema: OpenAPIV3.SchemaObject & SchemaObjectExtend, defaultName: string = ''): string {
+		const definitionName = []
+		if (schema[X_GENERATOR_NAMESPACE]) {
+			// exact namespace
+			definitionName.push(
+				schema[X_GENERATOR_NAMESPACE],
+				pascalCase(schema[X_GENERATOR_TYPE] || schema.title || defaultName),
+			)
+		} else if (schema[X_NAMESPACE]) {
+			// schema namespace
+			definitionName.push(
+				pascalCase(schema[X_NAMESPACE]),
+				pascalCase(schema[X_GENERATOR_TYPE] || schema.title || defaultName).replace(pascalCase(schema[X_NAMESPACE]), ''),
+			)
+		} else {
+			definitionName.push(
+				pascalCase(schema[X_GENERATOR_TYPE] || schema.title || defaultName),
+			)
+		}
+		return definitionName.join('.')
+	}
 }
 
 interface ApiOperation {
@@ -466,4 +494,5 @@ interface ApiOperation {
 
 interface SchemaObjectExtend {
 	_transformed?: boolean
+	_definitionName?: string
 }
