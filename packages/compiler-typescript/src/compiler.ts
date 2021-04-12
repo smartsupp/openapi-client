@@ -83,7 +83,9 @@ export class Compiler {
 	compileTypes(data: CompileData.Data, options: CompilerOptions = {}): string {
 		return renderTemplate(this.getTemplate('types'), {
 			nativeEnum: options.nativeEnum || false,
-			...data,
+			apis: data.apis,
+			definitions: getDefinitions(data.definitions),
+			namespaces: getNamespaces(data.definitions),
 		}, 'typescript')
 			.replace(/}\nexport/gm, '}\n\nexport') // add missing new lines before export
 			.replace(/^(\t+export\s(interface|class|enum)(.*))$/gm, '\n$1') // add missing new lines before export in namespace
@@ -161,4 +163,28 @@ function loadTemplate(name: string): string {
 function renderTemplate(renderer: Handlebars.TemplateDelegate, data: any = {}, pretifyName?: prettier.BuiltInParserName): string {
 	const output = renderer(data)
 	return pretifyName ? pretify(output, pretifyName) : output
+}
+
+function getNamespaces(definitions: CompileData.Definition[]) {
+	const namespaces: Record<string, CompileData.Definition[]> = {}
+	for (const definition of definitions) {
+		if (definition.name.includes('.')) {
+			const [namespace, name] = definition.name.split('.', 2)
+			if (!namespaces[namespace]) namespaces[namespace] = []
+			namespaces[namespace].push({
+				...definition,
+				name: name,
+			})
+		}
+	}
+	return Object.keys(namespaces).map((key) => ({
+		name: key,
+		definitions: namespaces[key],
+	}))
+}
+
+function getDefinitions(definitions: CompileData.Definition[]): CompileData.Definition[] {
+	return definitions.filter((definition) => {
+		return !definition.name.includes('.')
+	})
 }

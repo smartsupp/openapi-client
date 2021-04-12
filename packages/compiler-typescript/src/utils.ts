@@ -68,7 +68,7 @@ export function formatTypeSimple(type: string): string {
 }
 
 export function isTypeNatural(type: string): boolean {
-	return ['string', 'boolean', 'number', 'any', 'null'].includes(type)
+	return ['string', 'boolean', 'number', 'any', 'null'].includes(type) || type.startsWith('"')
 }
 
 export function lcFirst(name: string): string {

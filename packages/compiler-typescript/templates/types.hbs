@@ -52,6 +52,12 @@ export interface IAdapter {
 
 {{> definitions definitions=definitions}}
 
+{{#each namespaces as |namespace|}}
+export namespace {{#pascalCase}}{{namespace.name}}{{/pascalCase}} {
+	{{> definitions definitions=namespace.definitions}}
+}
+{{/each}}
+
 {{#each apis as |api|}}
 export namespace {{#pascalCase}}{{api.name}}Api{{/pascalCase}} {
 	{{> definitions definitions=api.definitions}}
