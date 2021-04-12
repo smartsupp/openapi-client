@@ -20,7 +20,9 @@ export interface Order {
 	shipDate?: string
 	/** Order Status */
 	status?: OrderStatus
+	type?: 'primary'
 	complete?: boolean
+	items?: Order.Item[]
 }
 
 export const OrderStatus = {
@@ -86,6 +88,14 @@ export interface ApiResponse {
 	code?: number
 	type?: string
 	message?: string
+}
+
+export namespace Order {
+	export interface Item {
+		id?: number
+		petId?: number
+		quantity?: number
+	}
 }
 
 export namespace PetApi {
