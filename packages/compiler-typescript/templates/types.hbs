@@ -1,6 +1,10 @@
 /* tslint:disable */
 /* eslint-disable */
 
+{{#each clients as |client|}}
+export * as {{client.version}} from './clients/{{client.version}}/src/types'
+{{/each}}
+
 {{#*inline "definitions"}}
 {{#each definitions as |definition|}}
 {{#ifEquals definition.type 'enum'}}

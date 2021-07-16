@@ -84,6 +84,7 @@ export class Compiler {
 		return renderTemplate(this.getTemplate('types'), {
 			nativeEnum: options.nativeEnum || false,
 			apis: data.apis,
+			clients: data.clients || [],
 			definitions: getDefinitions(data.definitions),
 			namespaces: getNamespaces(data.definitions),
 		}, 'typescript')
@@ -111,6 +112,7 @@ export class Compiler {
 				name: lcFirst(api.name),
 				className: pascalCase(api.name) + 'Client',
 			})),
+			clients: data.clients || [],
 		}, 'typescript')
 	}
 

@@ -13,12 +13,18 @@ export namespace CompileData {
 		info: OpenAPIV3.InfoObject
 		definitions: Definition[]
 		apis: Api[]
+		clients?: Client[]
 	}
 
 	export interface Api {
 		name: string
 		definitions: Definition[]
 		operations: Operation[]
+	}
+
+	export interface Client {
+		import: string
+		className: string
 	}
 
 	export interface Definition {
