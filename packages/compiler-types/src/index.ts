@@ -23,7 +23,7 @@ export namespace CompileData {
 	}
 
 	export interface Client {
-		import: string
+		version: string
 		className: string
 	}
 
