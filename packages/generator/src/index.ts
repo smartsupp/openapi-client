@@ -29,7 +29,7 @@ export function generateMultiClient(specs: { [key: string]: OpenAPIV3.Document }
 	return targets.map((target) => {
 		del.sync([target.outDir + '/**'])
 
-		const mergedCompileData: CompileData.Data = Object.entries(specs).reduce((acc: any, [version, spec]) => {
+		const mergedCompileData: CompileData.Data = Object.entries(specs).reduce((acc: CompileData.Data, [version, spec]: [string, OpenAPIV3.Document]) => {
 			const compileData = transform(spec, target.transformOptions)
 			const targetVersion = {
 				...target,
@@ -44,33 +44,16 @@ export function generateMultiClient(specs: { [key: string]: OpenAPIV3.Document }
 			mkdirSync(targetVersion.outDir)
 			writeCompiledData(compileData, targetVersion)
 
-			acc.name = compileData.name
-			acc.info = compileData.info
-			acc.definitions = [].concat(compileData.definitions, acc.definitions).reduce((acc: CompileData.Definition[], definition) => {
-				if (!acc.find(item => item.name === definition.name)) {
-					acc.push(definition)
-				}
-
-				return acc
-			}, [])
-
-			acc.apis = [].concat(compileData.apis, acc.apis).reduce((acc: CompileData.Api[], api) => {
-				if (!acc.find(item => item.name === api.name)) {
-					acc.push(api)
-				}
-
-				return acc
-			}, [])
-
+			mergeCompiledData(compileData, acc)
 			acc.clients.push({
-				version: version,
+				name: version,
 				className: targetVersion.compilerOptions.clientClass,
 			})
 
 			return acc
 		}, {
-			name: null,
-			info: {},
+			name: '',
+			info: { title: '', version: '' },
 			definitions: [],
 			apis: [],
 			clients: [],
@@ -108,6 +91,28 @@ function resolveCompiler(name: string): Compile {
 		}
 	}
 	throw new Error(`Compiler module not found. Please install any of ${names.join(', ')}.`)
+}
+
+function mergeCompiledData(from: CompileData.Data, to: CompileData.Data): CompileData.Data {
+	return Object.assign(
+		to,
+		{
+			name: from.name,
+			info: from.info,
+			definitions: [].concat(from.definitions, to.definitions).reduce(mergeBy(['type', 'name']), []),
+			apis: [].concat(from.apis, to.apis).reduce(mergeBy(['name']), []),
+		},
+	)
+}
+
+function mergeBy(fields: string[]) {
+	return function (acc: any[], item: { [key: string]: any }) {
+		if (!acc.find((existed) => fields.every(field => existed[field] === item[field]))) {
+			return acc.concat(item)
+		}
+
+		return acc
+	}
 }
 
 function ucFirst(name: string): string {

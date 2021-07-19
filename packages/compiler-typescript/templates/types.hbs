@@ -2,7 +2,7 @@
 /* eslint-disable */
 
 {{#each clients as |client|}}
-export * as {{client.version}} from './clients/{{client.version}}/src/types'
+export * as {{client.name}} from './clients/{{client.name}}/src/types'
 {{/each}}
 
 {{#*inline "definitions"}}

@@ -6,7 +6,7 @@ import { IAdapter } from './types'
 import { {{api.className}} } from './apis/{{api.name}}'
 {{/each}}
 {{#each clients as |client|}}
-import { {{client.className}} } from './clients/{{client.version}}/src'
+import { {{client.className}} } from './clients/{{client.name}}/src'
 {{/each}}
 
 export class {{clientClassName}}<O = any> {
@@ -15,7 +15,7 @@ export class {{clientClassName}}<O = any> {
 	{{/each}}
 
 	{{#each clients as |client|}}
-	{{client.version}}: {{client.className}}<O>
+	{{client.name}}: {{client.className}}<O>
 	{{/each}}
 
 	constructor(public adapter: IAdapter) {
@@ -24,7 +24,7 @@ export class {{clientClassName}}<O = any> {
 		{{/each}}
 
 		{{#each clients as |client|}}
-		this.{{client.version}} = new {{client.className}}(adapter)
+		this.{{client.name}} = new {{client.className}}(adapter)
 		{{/each}}
 	}
 
