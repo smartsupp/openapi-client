@@ -25,7 +25,7 @@ export function generateClients(spec: OpenAPIV3.Document, targets: TargetOptions
 	})
 }
 
-export function generateMultiClient(specs: { [key: string]: OpenAPIV3.Document }, targets: TargetOptions[]) {
+export function generateMultiClients(specs: { [key: string]: OpenAPIV3.Document }, targets: TargetOptions[]) {
 	return targets.map((target) => {
 		del.sync([target.outDir + '/**'])
 
