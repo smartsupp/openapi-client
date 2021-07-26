@@ -8,7 +8,7 @@ export * from './apis/{{api.name}}'
 {{/each}}
 
 {{#each clients as |client|}}
-export * as {{client.clientClassName}} from './clients/{{client.name}}/src'
+export * as {{client.className}} from './clients/{{client.name}}/src'
 {{/each}}
 
 // default export main class
