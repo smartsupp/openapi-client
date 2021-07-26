@@ -25,12 +25,12 @@ export function generateClients(spec: OpenAPIV3.Document, targets: TargetOptions
 	})
 }
 
-export function generateMultiClient(specs: { [key: string]: OpenAPIV3.Document }, targets: TargetOptions[]) {
+export function generateMultiClients(specs: { [key: string]: OpenAPIV3.Document }, targets: TargetOptions[]) {
 	return targets.map((target) => {
 		del.sync([target.outDir + '/**'])
 
 		const mergedCompileData: CompileData.Data = Object.entries(specs).reduce((acc: CompileData.Data, [version, spec]: [string, OpenAPIV3.Document]) => {
-			const compileData = transform(spec, target.transformOptions)
+			const compileData = transform(spec, {...target.transformOptions, pathPrefix: `/${version}`})
 			const targetVersion = {
 				...target,
 				outDir: `${target.outDir}/src/clients/${version}`,

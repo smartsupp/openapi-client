@@ -123,6 +123,10 @@ export class Compiler {
 				name: lcFirst(api.name),
 				className: pascalCase(api.name) + 'Client',
 			})),
+			clients: (data.clients || []).map((client) => ({
+				...client,
+				clientClassName: options.clientClass + pascalCase(client.name)
+			})),
 		}, 'typescript')
 	}
 

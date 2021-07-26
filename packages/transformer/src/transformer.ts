@@ -8,6 +8,7 @@ import { X_ENUM_NAMES, X_GENERATOR_NAMESPACE, X_GENERATOR_TYPE, X_NAMESPACE } fr
 export interface TransformOptions {
 	requestBodyRequiredPropsWithDefaults?: boolean
 	requestQueryRequiredPropsWithDefaults?: boolean
+	pathPrefix?: string
 }
 
 export class Transformer {
@@ -44,7 +45,7 @@ export class Transformer {
 					if (!apis[tag]) {
 						apis[tag] = []
 					}
-					apis[tag].push({ path, method, operation })
+					apis[tag].push({ path: `${this.options.pathPrefix ?? ''}${path}`, method, operation })
 				}
 			}
 		}
