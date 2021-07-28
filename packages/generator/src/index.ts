@@ -1,4 +1,4 @@
-import { CompiledFile } from '@openapi-client/compiler-types'
+import { CompiledFile, CompileData } from '@openapi-client/compiler-types'
 import { transform } from '@openapi-client/transformer'
 import { TransformOptions } from '@openapi-client/transformer'
 import del from 'del'
@@ -19,16 +19,54 @@ export interface TargetOptions {
 
 export function generateClients(spec: OpenAPIV3.Document, targets: TargetOptions[]): CompiledFile[][] {
 	return targets.map((target) => {
-		return generateClient(spec, target)
+		del.sync([target.outDir + '/**'])
+		const compileData = transform(spec, target.transformOptions)
+		return writeCompiledData(compileData, target)
 	})
 }
 
-function generateClient(spec: OpenAPIV3.Document, target: TargetOptions): CompiledFile[] {
-	const compileData = transform(spec, target.transformOptions)
+export function generateMultiClients(specs: { [key: string]: OpenAPIV3.Document }, targets: TargetOptions[]) {
+	return targets.map((target) => {
+		del.sync([target.outDir + '/**'])
+
+		const mergedCompileData: CompileData.Data = Object.entries(specs).reduce((acc: CompileData.Data, [version, spec]: [string, OpenAPIV3.Document]) => {
+			const compileData = transform(spec, {...target.transformOptions, pathPrefix: `/${version}`})
+			const targetVersion = {
+				...target,
+				outDir: `${target.outDir}/src/clients/${version}`,
+				compilerOptions: {
+					...target.compilerOptions,
+					npmName: `${target.compilerOptions.npmName}-${version}`,
+					clientClass: `${target.compilerOptions.clientClass}${ucFirst(version)}`,
+				},
+			}
+
+			mkdirSync(targetVersion.outDir)
+			writeCompiledData(compileData, targetVersion)
+
+			mergeCompiledData(compileData, acc)
+			acc.clients.push({
+				name: version,
+				className: targetVersion.compilerOptions.clientClass,
+			})
+
+			return acc
+		}, {
+			name: '',
+			info: { title: '', version: '' },
+			definitions: [],
+			apis: [],
+			clients: [],
+		})
+
+		return writeCompiledData(mergedCompileData, target)
+	})
+}
+
+function writeCompiledData(compileData: CompileData.Data, target: TargetOptions) {
 	const compile: Compile = resolveCompiler(target.name)
 	const result = compile(compileData, target.compilerOptions)
 
-	del.sync([target.outDir + '/**'])
 	for (const item of result) {
 		const targetPath = target.outDir + '/' + item.path
 		mkdirSync(path.dirname(targetPath))
@@ -53,4 +91,30 @@ function resolveCompiler(name: string): Compile {
 		}
 	}
 	throw new Error(`Compiler module not found. Please install any of ${names.join(', ')}.`)
+}
+
+function mergeCompiledData(from: CompileData.Data, to: CompileData.Data): CompileData.Data {
+	return Object.assign(
+		to,
+		{
+			name: from.name,
+			info: from.info,
+			definitions: [].concat(from.definitions, to.definitions).reduce(mergeBy(['type', 'name']), []),
+			apis: [].concat(from.apis, to.apis).reduce(mergeBy(['name']), []),
+		},
+	)
+}
+
+function mergeBy(fields: string[]) {
+	return function (acc: any[], item: { [key: string]: any }) {
+		if (!acc.find((existed) => fields.every(field => existed[field] === item[field]))) {
+			return acc.concat(item)
+		}
+
+		return acc
+	}
+}
+
+function ucFirst(name: string): string {
+	return name[0].toUpperCase() + name.substring(1)
 }

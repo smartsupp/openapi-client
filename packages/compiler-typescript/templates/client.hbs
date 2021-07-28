@@ -5,15 +5,26 @@ import { IAdapter } from './types'
 {{#each apis as |api|}}
 import { {{api.className}} } from './apis/{{api.name}}'
 {{/each}}
+{{#each clients as |client|}}
+import { {{client.className}} } from './clients/{{client.name}}/src'
+{{/each}}
 
 export class {{clientClassName}}<O = any> {
 	{{#each apis as |api|}}
 	{{api.name}}: {{api.className}}<O>
 	{{/each}}
 
+	{{#each clients as |client|}}
+	{{client.name}}: {{client.className}}<O>
+	{{/each}}
+
 	constructor(public adapter: IAdapter) {
 		{{#each apis as |api|}}
 		this.{{api.name}} = new {{api.className}}(adapter)
+		{{/each}}
+
+		{{#each clients as |client|}}
+		this.{{client.name}} = new {{client.className}}(adapter)
 		{{/each}}
 	}
 
@@ -21,3 +32,5 @@ export class {{clientClassName}}<O = any> {
 		return new {{clientClassName}}(this.adapter.withOptions(o))
 	}
 }
+
+export default {{clientClassName}}
