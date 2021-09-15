@@ -37,8 +37,8 @@ export class AxiosAdapter {
 				url: path,
 				data: body,
 				params: query,
-				...this.createOptions(options || {}),
 				validateStatus: status => status < 300,
+				...this.createOptions(options || {}),
 			})
 		} catch (err) {
 			(err as AdapterError<any>).isOpenApiError = true
