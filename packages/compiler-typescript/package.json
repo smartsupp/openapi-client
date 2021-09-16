@@ -1,6 +1,6 @@
 {
   "name": "@openapi-client/compiler-typescript",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Generate typescript client",
   "repository": "https://github.com/smartsupp/openapi-client.git",
   "homepage": "https://github.com/smartsupp/openapi-client/tree/master/packages/compiler-typescript",
