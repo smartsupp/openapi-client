@@ -4,7 +4,6 @@ import { TransformOptions } from '@openapi-client/transformer'
 import del from 'del'
 import fs from 'fs'
 import isInstalled from 'is-module-installed'
-import { mkdirSync } from 'mkdir-recursive'
 import { OpenAPIV3 } from 'openapi-types'
 import path from 'path'
 
@@ -41,7 +40,7 @@ export function generateMultiClients(specs: { [key: string]: OpenAPIV3.Document 
 				},
 			}
 
-			mkdirSync(targetVersion.outDir)
+			fs.mkdirSync(targetVersion.outDir, { recursive: true })
 			writeCompiledData(compileData, targetVersion)
 
 			mergeCompiledData(compileData, acc)
@@ -69,7 +68,7 @@ function writeCompiledData(compileData: CompileData.Data, target: TargetOptions)
 
 	for (const item of result) {
 		const targetPath = target.outDir + '/' + item.path
-		mkdirSync(path.dirname(targetPath))
+		fs.mkdirSync(path.dirname(targetPath), { recursive: true })
 		fs.writeFileSync(targetPath, item.data, { flag: 'w' })
 	}
 
