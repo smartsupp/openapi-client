@@ -42,6 +42,22 @@ export interface {{definition.name}}{{#if definition.extends}} extends {{definit
 {{/each}}
 {{/inline}}
 
+{{#*inline "paths"}}
+{{#each operations as |operation|}}
+	export const {{#pascalCase}}{{operation.name}}{{/pascalCase}} = {
+		method: Methods.{{operation.method}},
+		path: '{{operation.path}}',
+		{{#if operation.params}}
+		params: {
+		{{#each operation.params as |param|}}
+			{{param.name}}: 'string',
+		{{/each}}
+		},
+		{{/if}}
+	}
+{{/each}}
+{{/inline}}
+
 export interface AdapterResponse<T> {
 	status: number
 	statusText: string
@@ -62,8 +78,21 @@ export namespace {{#pascalCase}}{{namespace.name}}{{/pascalCase}} {
 }
 {{/each}}
 
+{{#if @root.exportPaths}}
+export const Methods = {
+	{{#each methods as |method|}}
+	{{method}}: '{{#upperCase}}{{method}}{{/upperCase}}',
+	{{/each}}
+}
+{{/if}}
+
 {{#each apis as |api|}}
 export namespace {{#pascalCase}}{{api.name}}Api{{/pascalCase}} {
+	{{#if @root.exportPaths}}
+		export namespace Paths {
+			{{> paths operations=api.operations}}
+		}
+	{{/if}}
 	{{> definitions definitions=api.definitions}}
 }
 {{/each}}
