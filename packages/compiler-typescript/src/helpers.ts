@@ -20,6 +20,11 @@ export default {
 		return camelCase(options.fn(this))
 	},
 
+	upperCase: (options) => {
+		const value: string = options.fn(this)
+		return value.toUpperCase()
+	},
+
 	propType: (context: string | string[]) => {
 		return expandType(context)
 	},

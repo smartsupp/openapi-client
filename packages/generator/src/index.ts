@@ -14,6 +14,7 @@ export interface TargetOptions {
 	outDir: string
 	compilerOptions?: any
 	transformOptions?: TransformOptions
+	exportPaths?: boolean
 }
 
 export function generateClients(spec: OpenAPIV3.Document, targets: TargetOptions[]): CompiledFile[][] {

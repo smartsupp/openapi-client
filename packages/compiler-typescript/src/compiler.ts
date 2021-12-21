@@ -21,6 +21,7 @@ export interface CompilerOptions {
 	clientClass?: string
 	// default false
 	nativeEnum?: boolean
+	exportPaths?: boolean
 }
 
 for (const name in helpers) {
@@ -87,6 +88,8 @@ export class Compiler {
 			clients: data.clients || [],
 			definitions: getDefinitions(data.definitions),
 			namespaces: getNamespaces(data.definitions),
+			methods: getMethods(data.apis),
+			exportPaths: options.exportPaths || false,
 		}, 'typescript')
 			.replace(/}\nexport/gm, '}\n\nexport') // add missing new lines before export
 			.replace(/^(\t+export\s(interface|class|enum)(.*))$/gm, '\n$1') // add missing new lines before export in namespace
@@ -190,4 +193,11 @@ function getDefinitions(definitions: CompileData.Definition[]): CompileData.Defi
 	return definitions.filter((definition) => {
 		return !definition.name.includes('.')
 	})
+}
+
+function getMethods(apis: CompileData.Api[]) {
+	return [...apis.reduce((acc, api) => {
+		api.operations.forEach(operation => acc.add(operation.method))
+		return acc
+	}, new Set())]
 }
