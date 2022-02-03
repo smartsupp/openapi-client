@@ -8,6 +8,7 @@ packages/*/dist/
 coverage/
 dist/
 out/
+tsconfig.tsbuildinfo
 
 # logs
 npm-debug.log

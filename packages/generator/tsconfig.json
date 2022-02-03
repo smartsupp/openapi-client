@@ -1,8 +1,21 @@
 {
 	"extends": "../../tsconfig.json",
 	"compilerOptions": {
+    "composite": true,
+    "rootDir": "./src",
 		"outDir": "./dist"
 	},
+  "references": [
+    {
+      "path": "../compiler-types/tsconfig.json"
+    },
+    {
+      "path": "../compiler-typescript/tsconfig.json"
+    },
+    {
+      "path": "../transformer/tsconfig.json"
+    }
+  ],
 	"include": [
 		"src/**/*"
 	]

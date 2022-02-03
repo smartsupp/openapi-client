@@ -1,11 +1,19 @@
 {
   "compilerOptions": {
-    "target": "es2020",
+    "target": "es2021",
     "module": "commonjs",
     "moduleResolution": "node",
     "declaration": true,
     "inlineSourceMap": true,
     "esModuleInterop": true,
-    "types": ["node", "jest"]
-  }
+    "types": ["node", "jest"],
+    "baseUrl": ".",
+    "paths": {
+      "@openapi-client/*": ["packages/*/src"]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
