@@ -16,4 +16,7 @@ module.exports = {
 		"out",
 		"dist",
 	],
+	moduleNameMapper: {
+		'^@openapi-client/(.*)': '<rootDir>/../$1/src',
+	},
 };
