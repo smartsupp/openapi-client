@@ -19,9 +19,9 @@
     "pascal-case": "^3.1.2"
   },
   "scripts": {
-    "clean": "../../node_modules/.bin/rimraf dist",
+    "clean": "../../node_modules/.bin/rimraf dist tsconfig.tsbuildinfo",
     "build": "../../node_modules/.bin/run-s clean build:ts",
-    "build:ts": "../../node_modules/.bin/tsc -p tsconfig.json",
+    "build:ts": "../../node_modules/.bin/tsc -b tsconfig.json",
     "build:watch": "../../node_modules/.bin/tsc -p tsconfig.json -w",
     "lint": "../../node_modules/.bin/eslint ./src/**/*.ts",
     "fix": "../../node_modules/.bin/eslint --fix ./src/**/*.ts",
