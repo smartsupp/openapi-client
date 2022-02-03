@@ -1,0 +1,20 @@
+# https://github.com/marketplace/actions/pull-request-linter-action
+
+name: 'PR Name Lint'
+
+on:
+  pull_request:
+    types: ['opened', 'edited', 'reopened', 'synchronize']
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'npm'
+      - name: Install Dependencies
+        run: npm install --no-package-lock --no-save @commitlint/config-conventional @commitlint/config-lerna-scopes lerna
+      - uses: JulienKode/pull-request-name-linter-action@v0.2.0
