@@ -9,8 +9,10 @@
     "publish": "lerna publish from-package --yes",
     "clean": "lerna run clean",
     "clean:npm": "rimraf './packages/*/package-lock.json' && rimraf './packages/*/node_modules' && rimraf './package-lock.json' && rimraf './node_modules'",
-    "lint": "lerna run lint",
-    "fix": "lerna run fix",
+    "lint": "lerna run lint && npm run lint:markdown",
+    "lint:markdown": "markdownlint README.md 'packages/*/README.md'",
+    "fix": "lerna run fix && npm run fix:markdown",
+    "fix:markdown": "npm run lint:markdown -- --fix",
     "test": "lerna run test",
     "test:debug": "TEST_DEBUG=1 npm run test",
     "build": "lerna run build",
@@ -36,6 +38,7 @@
     "koa": "^2.13.0",
     "lerna": "^3.22.1",
     "lint-staged": "^10.5.3",
+    "markdownlint-cli": "^0.30.0",
     "npm-run-all": "^4.1.5",
     "rimraf": "^3.0.2",
     "ts-jest": "^26.4.4",
@@ -44,6 +47,9 @@
   "lint-staged": {
     "packages/**/*.ts": [
       "eslint --fix"
+    ],
+    "packages/**/README.md": [
+      "markdownlint --fix"
     ]
   }
 }
