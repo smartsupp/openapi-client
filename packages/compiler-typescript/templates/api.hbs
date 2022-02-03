@@ -12,7 +12,7 @@ export class {{className}}<O> {
 	{{#camelCase}}{{op.name}}{{/camelCase}}({{#opParams op}}{{/opParams}}): Promise<{{#opResponse op}}{{/opResponse}}> {
 		return this.adapter.request({{#opArgs op}}{{/opArgs}}).then(toData)
 		{{#if op.response}}{{#unless op.response.required}}.catch((err) => {
-			if (err.status === 404) {
+			if (err.response?.status === 404) {
 				return null
 			} else {
 				throw err
