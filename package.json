@@ -31,6 +31,7 @@
     "lint": "lerna run lint",
     "fix": "lerna run fix",
     "test": "lerna run --stream --concurrency 1 --sort test",
+    "test:debug": "TEST_DEBUG=1 npm run test",
     "build": "lerna run --stream --concurrency 1 --sort build",
     "build:watch": "lerna run build:watch --stream --no-sort --concurrency 9999",
     "outdated": "lerna exec --no-bail --no-prefix -- npm outdated",
