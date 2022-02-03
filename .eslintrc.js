@@ -119,5 +119,10 @@ module.exports = {
 			},
 		},
 	],
+	ignorePatterns: [
+		'jest.config.js',
+		'commitlint.config.js',
+		'packages/**/dist',
+	],
 }
 

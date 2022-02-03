@@ -1,4 +1,4 @@
-import util from 'util'
+import { inspect } from 'util'
 import { Transformer } from '../../src/'
 
 describe('Transformer', () => {
@@ -11,10 +11,10 @@ describe('Transformer', () => {
 	test('toData()', () => {
 		const result = transformer.transform()
 		expect(result).toBeDefined()
-		dump(result)
+		process.env.TEST_DEBUG && dump(result)
 	})
 })
 
 function dump(obj) {
-	console.log(util.inspect(obj, false, null, true))
+	console.log(inspect(obj, false, null, true))
 }

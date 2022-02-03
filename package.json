@@ -2,6 +2,26 @@
   "name": "@openapi-client/monorepo",
   "private": true,
   "version": "0.0.0",
+  "scripts": {
+    "bootstrap": "lerna bootstrap --no-ci",
+    "changed": "lerna changed --all --long",
+    "version": "lerna version --conventional-commits",
+    "publish": "lerna publish from-package --yes",
+    "clean": "lerna run clean",
+    "clean:npm": "rimraf './packages/*/package-lock.json' && rimraf './packages/*/node_modules' && rimraf './package-lock.json' && rimraf './node_modules'",
+    "lint": "lerna run lint",
+    "fix": "lerna run fix",
+    "test": "lerna run --stream --concurrency 1 --sort test",
+    "test:debug": "TEST_DEBUG=1 npm run test",
+    "build": "lerna run --stream --concurrency 1 --sort build",
+    "build:watch": "lerna run build:watch --stream --no-sort --concurrency 9999",
+    "outdated": "lerna exec --no-bail --no-prefix -- npm outdated",
+    "postinstall": "husky install && npm run bootstrap"
+  },
+  "engines": {
+    "node": "~16.13.0",
+    "npm": "~8.1.0"
+  },
   "devDependencies": {
     "@types/jest": "^26.0.19",
     "@types/node": "^14.14.16",
@@ -20,21 +40,6 @@
     "rimraf": "^3.0.2",
     "ts-jest": "^26.4.4",
     "typescript": "^4.1.3"
-  },
-  "scripts": {
-    "bootstrap": "lerna bootstrap",
-    "changed": "lerna changed --all --long",
-    "version": "lerna version --conventional-commits",
-    "publish": "lerna publish from-package --yes",
-    "clean": "lerna run clean",
-    "clean:npm": "rimraf './packages/*/package-lock.json' && rimraf './packages/*/node_modules' && rimraf './package-lock.json' && rimraf './node_modules'",
-    "lint": "lerna run lint",
-    "fix": "lerna run fix",
-    "test": "lerna run --stream --concurrency 1 --sort test",
-    "build": "lerna run --stream --concurrency 1 --sort build",
-    "build:watch": "lerna run build:watch --stream --no-sort --concurrency 9999",
-    "outdated": "lerna exec --no-bail --no-prefix -- npm outdated",
-    "postinstall": "husky install && npm run bootstrap"
   },
   "lint-staged": {
     "packages/**/*.ts": [

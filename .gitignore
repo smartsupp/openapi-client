@@ -1,13 +1,13 @@
 # dependencies
 node_modules/
 packages/*/package-lock.json
-package-lock.json
 
 # build and test
 packages/*/dist/
 coverage/
 dist/
 out/
+tsconfig.tsbuildinfo
 
 # logs
 npm-debug.log

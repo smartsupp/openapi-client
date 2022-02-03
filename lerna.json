@@ -8,7 +8,8 @@
       "npmClientArgs": ["--no-package-lock"]
     },
     "version": {
-      "allowBranch": ["master"]
+      "allowBranch": ["master"],
+      "message": "chore(release): Publish"
     },
     "publish": {
       "allowBranch": ["master"]
@@ -16,6 +17,8 @@
   },
   "ignoreChanges": [
     "**/test/**",
-    "**/*.js"
+    "**/*.js",
+    "**/*.md",
+    "**/package-lock.json"
   ]
 }
