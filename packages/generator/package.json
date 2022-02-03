@@ -1,6 +1,6 @@
 {
   "name": "@openapi-client/generator",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Generate clients",
   "repository": "https://github.com/smartsupp/openapi-client.git",
   "homepage": "https://github.com/smartsupp/openapi-client/tree/master/packages/generator",
@@ -19,7 +19,7 @@
     "openapi-types": "^7.2.2"
   },
   "devDependencies": {
-    "@openapi-client/compiler-typescript": "^0.6.0"
+    "@openapi-client/compiler-typescript": "^0.6.1"
   },
   "scripts": {
     "clean": "../../node_modules/.bin/rimraf dist test/out",
