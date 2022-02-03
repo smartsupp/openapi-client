@@ -1,16 +1,16 @@
 {
-	"extends": "../../tsconfig.json",
-	"compilerOptions": {
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
     "composite": true,
     "rootDir": "./src",
-		"outDir": "./dist"
-	},
+    "outDir": "./dist"
+  },
   "references": [
     {
       "path": "../compiler-types/tsconfig.json"
     }
   ],
-	"include": [
-		"src/**/*"
-	]
+  "include": [
+    "src/**/*"
+  ]
 }
