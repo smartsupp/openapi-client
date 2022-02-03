@@ -1,6 +1,6 @@
 {
   "name": "@openapi-client/compiler-types",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Compiler shared types",
   "repository": "https://github.com/smartsupp/openapi-client.git",
   "homepage": "https://github.com/smartsupp/openapi-client/tree/master/packages/compiler-types",
