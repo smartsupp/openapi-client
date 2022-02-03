@@ -18,6 +18,10 @@
     "outdated": "lerna exec --no-bail --no-prefix -- npm outdated",
     "postinstall": "husky install && npm run bootstrap"
   },
+  "engines": {
+    "node": "~16.13.0",
+    "npm": "~8.1.0"
+  },
   "devDependencies": {
     "@types/jest": "^26.0.19",
     "@types/node": "^14.14.16",
