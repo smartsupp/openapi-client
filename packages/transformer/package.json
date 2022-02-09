@@ -1,6 +1,6 @@
 {
   "name": "@openapi-client/transformer",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "Transform OpenAPI specification to data object required by compilers",
   "repository": "https://github.com/smartsupp/openapi-client.git",
   "homepage": "https://github.com/smartsupp/openapi-client/tree/master/packages/transformer",

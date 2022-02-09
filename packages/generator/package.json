@@ -1,6 +1,6 @@
 {
   "name": "@openapi-client/generator",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "Generate clients",
   "repository": "https://github.com/smartsupp/openapi-client.git",
   "homepage": "https://github.com/smartsupp/openapi-client/tree/master/packages/generator",
@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@openapi-client/compiler-types": "^0.1.6",
-    "@openapi-client/transformer": "^0.4.2",
+    "@openapi-client/transformer": "^0.4.3",
     "del": "^6.0.0",
     "is-module-installed": "^2.0.13",
     "openapi-types": "^7.2.2"
