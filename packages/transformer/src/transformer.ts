@@ -429,7 +429,7 @@ export class Transformer {
 			return 'null'
 
 		} else {
-			throw new Error(`Unable to process parameter in ${defName}. Schema not supported`)
+			return 'any'
 		}
 	}
 
