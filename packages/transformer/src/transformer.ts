@@ -188,7 +188,7 @@ export class Transformer {
 		for (const key in this.spec.components.schemas) {
 			const schema: any = this.spec.components.schemas[key]
 			if (!schema.$ref) {
-				schema.title = pascalCase(schema.title ? schema.title : key)
+				schema.title = pascalCase(schema.title ? schema.title : key.replace('_', ' '))
 				schema._definitionName = this.getDefinitionName(schema)
 			}
 		}
@@ -285,21 +285,34 @@ export class Transformer {
 			for (const prop in schema.discriminator.mapping) {
 				const ref = schema.discriminator.mapping[prop]
 				const refSchema = this.derefSchema({ $ref: ref })
-				let refDefinition = this.data.definitions.find((def) => {
+				let refDefinition: Definition = this.data.definitions.find((def) => {
+					return def.name === refSchema._definitionName
+				}) || definitions.find((def) => {
 					return def.name === refSchema._definitionName
 				})
 				if (!refDefinition) {
 					refDefinition = this.transformDefinition(refSchema, '', definitions)
+					if (!refDefinition) {
+						throw new Error(`Schema ${ref} was not transformed`)
+					}
 					definitions.push(refDefinition)
 				}
-				refDefinition.properties = refDefinition.properties.filter((prop) => {
-					return prop.name !== schema.discriminator.propertyName
-				})
-				refDefinition.properties.unshift({
-					name: schema.discriminator.propertyName,
-					type: `"${prop}"`,
-					required: true,
-				})
+				if (!refDefinition._discriminatedProps) {
+					refDefinition.properties = refDefinition.properties.filter((prop) => {
+						return prop.name !== schema.discriminator.propertyName
+					})
+					refDefinition.properties.unshift({
+						name: schema.discriminator.propertyName,
+						type: [`"${prop}"`],
+						required: true,
+					})
+					refDefinition._discriminatedProps = true
+				} else {
+					const refProperty: any = refDefinition.properties.find((prop) => {
+						return prop.name === schema.discriminator.propertyName
+					})
+					refProperty.type.push(`"${prop}"`)
+				}
 			}
 		}
 
@@ -496,4 +509,8 @@ interface ApiOperation {
 interface SchemaObjectExtend {
 	_transformed?: boolean
 	_definitionName?: string
+}
+
+interface Definition extends CompileData.Definition {
+	_discriminatedProps?: boolean
 }
