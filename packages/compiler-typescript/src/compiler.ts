@@ -104,8 +104,6 @@ export class Compiler {
 			className: pascalCase(api.name) + 'Client',
 			namespace: pascalCase(api.name) + 'Api',
 		}, 'typescript')
-			.replace(/(\t(\w+)\()/g, '\n$1') // add new lines before methods
-			.replace(/{\n+\tconstructor/gm, '{\n\tconstructor') // remove new lines before constructor
 	}
 
 	compileClient(data: CompileData.Data, options: CompilerOptions = {}): string {

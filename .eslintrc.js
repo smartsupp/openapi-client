@@ -123,6 +123,7 @@ module.exports = {
 		'jest.config.js',
 		'commitlint.config.js',
 		'packages/**/dist',
+		'packages/**/out',
 	],
 }
 
