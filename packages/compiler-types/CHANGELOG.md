@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/smartsupp/openapi-client/compare/@openapi-client/compiler-types@0.1.6...@openapi-client/compiler-types@0.2.0) (2022-02-14)
+
+
+### Features
+
+* add support for deprecated fields ([#15](https://github.com/smartsupp/openapi-client/issues/15)) ([122de7a](https://github.com/smartsupp/openapi-client/commit/122de7aeba7f7497e2715a7f34af91e09fa203de))
+
+
+
+
+
 ## [0.1.6](https://github.com/smartsupp/openapi-client/compare/@openapi-client/compiler-types@0.1.5...@openapi-client/compiler-types@0.1.6) (2022-02-03)
 
 **Note:** Version bump only for package @openapi-client/compiler-types
