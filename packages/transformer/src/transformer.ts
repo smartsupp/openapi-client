@@ -76,6 +76,8 @@ export class Transformer {
 			query: null,
 			body: null,
 			response: null,
+			deprecated: operation.deprecated || false,
+			description: operation.description || '',
 		}
 
 		if (operation.parameters) {
@@ -130,6 +132,9 @@ export class Transformer {
 				}
 				if (param.description) {
 					(querySchema.properties[param.name] as OpenAPIV3.SchemaObject).description = param.description
+				}
+				if (param.deprecated) {
+					(querySchema.properties[param.name] as OpenAPIV3.SchemaObject).deprecated = param.deprecated
 				}
 			}
 		}
@@ -212,6 +217,8 @@ export class Transformer {
 		const definition: CompileData.Definition = {
 			type: null,
 			name: this.getDefinitionName(schema, name),
+			deprecated: schema.deprecated || false,
+			description: schema.description || '',
 		}
 		if (!definition.name) {
 			throw new Error('Definition name was unable to generate. Must be passed manually')
@@ -361,6 +368,7 @@ export class Transformer {
 			name,
 			type: this.transformType(schema, defName + pascalCase(name), definitions),
 			required: false,
+			deprecated: schema.deprecated || false,
 			description: schema.description || '',
 		}
 		if (schema.nullable) {

@@ -2,10 +2,16 @@ import * as types from '../types'
 
 export class {{className}}<O> {
 	raw: {{className}}Raw<O>
+
 	constructor(public adapter: types.IAdapter) {
 		this.raw = new {{className}}Raw(this.adapter)
 	}
-	{{#each api.operations as |op|}}
+	{{#each api.operations as |op|}}{{'\n'}}
+	{{#ifCond op.description '||' op.deprecated}}
+	/**
+	 * {{#if op.deprecated}}@deprecated {{/if}}{{op.description}}
+	 */
+	{{/ifCond}}
 	{{#camelCase}}{{op.name}}{{/camelCase}}({{#opParams op}}{{/opParams}}): Promise<{{#opResponse op}}{{/opResponse}}> {
 		return this.adapter.request({{#opArgs op}}{{/opArgs}}).then(toData)
 		{{#if op.response}}{{#unless op.response.required}}.catch((err) => {
@@ -21,7 +27,12 @@ export class {{className}}<O> {
 
 export class {{className}}Raw<O> {
 	constructor(public adapter: types.IAdapter) {}
-	{{#each api.operations as |op|}}
+	{{#each api.operations as |op|}}{{'\n'}}
+	{{#ifCond op.description '||' op.deprecated}}
+	/**
+	 * {{#if op.deprecated}}@deprecated {{/if}}{{op.description}}
+	 */
+	{{/ifCond}}
 	{{#camelCase}}{{op.name}}{{/camelCase}}({{#opParams op}}{{/opParams}}): Promise<types.AdapterResponse<{{#opResponseRaw op}}{{/opResponseRaw}}>> {
 		return this.adapter.request({{#opArgs op}}{{/opArgs}})
 	}

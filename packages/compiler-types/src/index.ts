@@ -35,6 +35,8 @@ export namespace CompileData {
 		extends?: string
 		values?: any[]
 		enum?: Enum[]
+		deprecated?: boolean
+		description?: string
 	}
 
 	export interface Enum {
@@ -46,6 +48,7 @@ export namespace CompileData {
 		name: string
 		type: string | string[]
 		required?: boolean
+		deprecated?: boolean
 		description?: string
 	}
 
@@ -57,6 +60,8 @@ export namespace CompileData {
 		query: OperationQuery | null
 		body: OperationBody | null
 		response: OperationResponse | null
+		deprecated?: boolean
+		description?: string
 	}
 
 	export interface OperationParam {
@@ -73,6 +78,7 @@ export namespace CompileData {
 	export interface OperationQuery {
 		type: string | string[]
 		required?: boolean
+		deprecated?: boolean
 	}
 
 	export interface OperationResponse {

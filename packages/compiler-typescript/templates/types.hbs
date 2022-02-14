@@ -4,6 +4,10 @@ export * as {{client.name}} from './clients/{{client.name}}/src/types'
 
 {{#*inline "definitions"}}
 {{#each definitions as |definition|}}
+{{#ifCond definition.description '||' definition.deprecated}}
+/**
+ * {{#if definition.deprecated}}@deprecated {{/if}}{{definition.description}}
+ */{{/ifCond}}
 {{#ifEquals definition.type 'enum'}}
 {{#if @root.nativeEnum}}
 export enum {{definition.name}} {
@@ -29,7 +33,7 @@ export type {{definition.name}} =
 {{#ifEquals definition.type 'interface'}}
 export interface {{definition.name}}{{#if definition.extends}} extends {{definition.extends}}{{/if}} {
 	{{#each definition.properties as |prop|}}
-	{{#if prop.description}}/** {{prop.description}} */{{/if}}
+	{{#ifCond prop.description '||' prop.deprecated}}/** {{#if prop.deprecated}}@deprecated {{/if}}{{prop.description}} */{{/ifCond}}
 	{{prop.name}}{{#unless prop.required}}?{{/unless}}: {{#propType prop.type}}{{/propType}}
 	{{/each}}
 	{{#if definition.additionalType}}[keyof: string]: {{#propType definition.additionalType}}{{/propType}}{{/if}}
