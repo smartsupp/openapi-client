@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.8.0](https://github.com/smartsupp/openapi-client/compare/@openapi-client/compiler-typescript@0.7.1...@openapi-client/compiler-typescript@0.8.0) (2022-02-20)
+
+
+### Features
+
+* **compiler-typescript:** improve generate code style ([269db62](https://github.com/smartsupp/openapi-client/commit/269db622f5344e7e8bf469437d8a9b3bbad912bf))
+
+
+
+
+
 ## [0.7.1](https://github.com/smartsupp/openapi-client/compare/@openapi-client/compiler-typescript@0.7.0...@openapi-client/compiler-typescript@0.7.1) (2022-02-20)
 
 
