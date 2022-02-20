@@ -2,7 +2,7 @@
 
 **Project in progress**.
 
-Best way to start is look on generated [petstore client](./examples/petstore/client-typescript).
+Best way to start is look on generated [petstore client](./examples/petstore/typescript).
 
 ## Motivation
 
