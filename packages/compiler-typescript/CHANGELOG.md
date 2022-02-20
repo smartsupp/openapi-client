@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.7.1](https://github.com/smartsupp/openapi-client/compare/@openapi-client/compiler-typescript@0.7.0...@openapi-client/compiler-typescript@0.7.1) (2022-02-20)
+
+
+### Bug Fixes
+
+* render all comments as multiline ([118203a](https://github.com/smartsupp/openapi-client/commit/118203ade1d76ffbc140eca70b6be35257aa72e6))
+
+
+
+
+
 # [0.7.0](https://github.com/smartsupp/openapi-client/compare/@openapi-client/compiler-typescript@0.6.3...@openapi-client/compiler-typescript@0.7.0) (2022-02-14)
 
 
