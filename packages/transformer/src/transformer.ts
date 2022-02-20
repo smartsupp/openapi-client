@@ -83,18 +83,18 @@ export class Transformer {
 		if (operation.parameters) {
 			const parameters = this.derefParameters(operation.parameters)
 			result.params = this.transformOperationParams(parameters, definitions)
-			result.query = this.transformOperationQuery(operation.operationId, parameters, definitions)
+			result.query = this.transformOperationQuery(operation, parameters, definitions)
 		}
 
 		if (operation.requestBody) {
 			const requestBody = this.derefRequestBody(operation.requestBody)
-			result.body = this.transformOperationBody(operation.operationId, requestBody, definitions)
+			result.body = this.transformOperationBody(operation, requestBody, definitions)
 		}
 
 		if (operation.responses) {
 			if (operation.responses['200'] || operation.responses['201']) {
 				const response = this.derefResponse(operation.responses['200'] || operation.responses['201'])
-				result.response = this.transformOperationResponse(operation.operationId, response, definitions)
+				result.response = this.transformOperationResponse(operation, response, definitions)
 			}
 			if (result.response && operation.responses['404'] && operation[extensions.X_GENERATOR_RESPONSE_NULLABLE]) {
 				result.response.required = false
@@ -118,11 +118,12 @@ export class Transformer {
 		return result
 	}
 
-	transformOperationQuery(operationId: string, parameters: OpenAPIV3.ParameterObject[], definitions: CompileData.Definition[]): CompileData.OperationQuery | null {
+	transformOperationQuery(operation: OpenAPIV3.OperationObject, parameters: OpenAPIV3.ParameterObject[], definitions: CompileData.Definition[]): CompileData.OperationQuery | null {
 		const querySchema: OpenAPIV3.SchemaObject = {
 			type: 'object',
 			properties: {},
 			required: [],
+			deprecated: operation.deprecated || false,
 		}
 		for (const param of parameters) {
 			if (param.in === 'query') {
@@ -142,7 +143,7 @@ export class Transformer {
 			return null
 		}
 
-		const definition = this.transformDefinition(querySchema, pascalCase(operationId) + 'Query', definitions)
+		const definition = this.transformDefinition(querySchema, pascalCase(operation.operationId) + 'Query', definitions)
 		definitions.push(definition)
 		return {
 			type: definition.name,
@@ -150,20 +151,23 @@ export class Transformer {
 		}
 	}
 
-	transformOperationBody(operationId: string, requestBody: OpenAPIV3.RequestBodyObject, definitions: CompileData.Definition[]): CompileData.OperationBody {
+	transformOperationBody(operation: OpenAPIV3.OperationObject, requestBody: OpenAPIV3.RequestBodyObject, definitions: CompileData.Definition[]): CompileData.OperationBody {
 		const mediaTypeObject: OpenAPIV3.MediaTypeObject = requestBody.content['application/json']
 		if (!mediaTypeObject) {
 			throw new Error(`Expected request content-type application/json, got ${Object.keys(requestBody.content)}`)
 		}
 
-		const type = this.resolveSchemaType(mediaTypeObject.schema, pascalCase(operationId) + 'Body', definitions)
+		if (operation.deprecated && !('$ref' in mediaTypeObject.schema)) {
+			mediaTypeObject.schema.deprecated = true
+		}
+		const type = this.resolveSchemaType(mediaTypeObject.schema, pascalCase(operation.operationId) + 'Body', definitions)
 		return {
 			type,
 			required: requestBody.required,
 		}
 	}
 
-	transformOperationResponse(operationId: string, response: OpenAPIV3.ResponseObject, definitions: CompileData.Definition[]): CompileData.OperationResponse | null {
+	transformOperationResponse(operation: OpenAPIV3.OperationObject, response: OpenAPIV3.ResponseObject, definitions: CompileData.Definition[]): CompileData.OperationResponse | null {
 		if (!response.content) {
 			return null
 		}
@@ -173,7 +177,10 @@ export class Transformer {
 			throw new Error(`Expected response content-type application/json, got ${Object.keys(response.content)}`)
 		}
 
-		const type = this.resolveSchemaType(mediaTypeObject.schema, pascalCase(operationId) + 'Response', definitions)
+		if (operation.deprecated && !('$ref' in mediaTypeObject.schema)) {
+			mediaTypeObject.schema.deprecated = true
+		}
+		const type = this.resolveSchemaType(mediaTypeObject.schema, pascalCase(operation.operationId) + 'Response', definitions)
 		return {
 			type,
 			required: true,

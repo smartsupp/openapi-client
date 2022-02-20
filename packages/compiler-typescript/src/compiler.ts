@@ -91,11 +91,6 @@ export class Compiler {
 			methods: getMethods(data.apis),
 			exportPaths: options.exportPaths || false,
 		}, 'typescript')
-			.replace(/}\nexport/gm, '}\n\nexport') // add missing new lines before export
-			.replace(/^(\t+export\s(interface|class|enum)(.*))$/gm, '\n$1') // add missing new lines before export in namespace
-			.replace(/{\n+/gm, '{\n') // remove new lines after namespace
-			.replace(/\n\n(\t+\w+\??):/gm, '\n$1:')
-			.replace(/\n\n\n+/gm, '\n\n')
 	}
 
 	compileApi(data: CompileData.Data, api: CompileData.Api): string {
