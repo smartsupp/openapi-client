@@ -92,7 +92,9 @@ export default {
 	opArgs: (context: CompileData.Operation) => {
 		return [
 			`'${context.method}'`,
-			`\`${context.path.replace(/{/g, '${')}\``,
+			context.params.length > 0
+				? `\`${context.path.replace(/{/g, '${')}\``
+				: `'${context.path.replace(/{/g, '${')}'`,
 			context.body ? 'body' : 'null',
 			context.query ? 'query' : 'null',
 			'options',
