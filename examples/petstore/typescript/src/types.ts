@@ -1,6 +1,3 @@
-/* tslint:disable */
-/* eslint-disable */
-
 export interface AdapterResponse<T> {
 	status: number
 	statusText: string
@@ -18,13 +15,18 @@ export interface Order {
 	petId?: number
 	quantity?: number
 	shipDate?: string
-	/** Order Status */
+	/**
+	 * Order Status
+	 */
 	status?: OrderStatus
 	type?: 'primary'
 	complete?: boolean
 	items?: Order.Item[]
 }
 
+/**
+ * Order Status
+ */
 export const OrderStatus = {
 	PLACED: 'placed',
 	APPROVED: 'approved',
@@ -58,7 +60,9 @@ export interface User {
 	email?: string
 	password?: string
 	phone?: string
-	/** User Status */
+	/**
+	 * User Status
+	 */
 	userStatus?: number
 }
 
@@ -73,10 +77,15 @@ export interface Pet {
 	category?: Category
 	photoUrls: string[]
 	tags?: Tag[]
-	/** pet status in the store */
+	/**
+	 * pet status in the store
+	 */
 	status?: PetStatus
 }
 
+/**
+ * pet status in the store
+ */
 export const PetStatus = {
 	Available: 'available',
 	Pending: 'pending',
@@ -99,6 +108,9 @@ export namespace Order {
 }
 
 export namespace PetApi {
+	/**
+	 * Status values that need to be considered for filter
+	 */
 	export const FindPetsByStatusQueryStatus = {
 		Available: 'available',
 		Pending: 'pending',
@@ -107,19 +119,27 @@ export namespace PetApi {
 	export type FindPetsByStatusQueryStatus = typeof FindPetsByStatusQueryStatus[keyof typeof FindPetsByStatusQueryStatus]
 
 	export interface FindPetsByStatusQuery {
-		/** Status values that need to be considered for filter */
+		/**
+		 * Status values that need to be considered for filter
+		 */
 		status?: FindPetsByStatusQueryStatus
 	}
 
 	export interface FindPetsByTagsQuery {
-		/** Tags to filter by */
+		/**
+		 * Tags to filter by
+		 */
 		tags?: string[]
 	}
 
 	export interface UpdatePetWithFormQuery {
-		/** Name of pet that needs to be updated */
+		/**
+		 * Name of pet that needs to be updated
+		 */
 		name?: string
-		/** Status of pet that needs to be updated */
+		/**
+		 * Status of pet that needs to be updated
+		 */
 		status?: string
 	}
 }
@@ -132,9 +152,13 @@ export namespace StoreApi {
 
 export namespace UserApi {
 	export interface LoginUserQuery {
-		/** The user name for login */
+		/**
+		 * The user name for login
+		 */
 		username?: string
-		/** The password for login in clear text */
+		/**
+		 * The password for login in clear text
+		 */
 		password?: string
 	}
 }

@@ -1,6 +1,3 @@
-/* tslint:disable */
-/* eslint-disable */
-
 import { IAdapter } from './types'
 import { PetClient } from './apis/pet'
 import { StoreClient } from './apis/store'
@@ -21,3 +18,5 @@ export class SwaggerPetstoreClient<O = any> {
 		return new SwaggerPetstoreClient(this.adapter.withOptions(o))
 	}
 }
+
+export default SwaggerPetstoreClient

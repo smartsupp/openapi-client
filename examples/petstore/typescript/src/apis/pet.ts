@@ -1,6 +1,3 @@
-/* tslint:disable */
-/* eslint-disable */
-
 import * as types from '../types'
 
 export class PetClient<O> {
@@ -10,22 +7,37 @@ export class PetClient<O> {
 		this.raw = new PetClientRaw(this.adapter)
 	}
 
+	/**
+	 * Update an existing pet by Id
+	 */
 	updatePet(body: types.Pet, options?: O): Promise<types.Pet> {
-		return this.adapter.request('put', `/pet`, body, null, options).then(toData)
+		return this.adapter.request('put', '/pet', body, null, options).then(toData)
 	}
 
+	/**
+	 * Add a new pet to the store
+	 */
 	addPet(body: types.Pet, options?: O): Promise<types.Pet> {
-		return this.adapter.request('post', `/pet`, body, null, options).then(toData)
+		return this.adapter.request('post', '/pet', body, null, options).then(toData)
 	}
 
+	/**
+	 * Multiple status values can be provided with comma separated strings
+	 */
 	findPetsByStatus(query?: types.PetApi.FindPetsByStatusQuery, options?: O): Promise<types.Pet[]> {
-		return this.adapter.request('get', `/pet/findByStatus`, null, query, options).then(toData)
+		return this.adapter.request('get', '/pet/findByStatus', null, query, options).then(toData)
 	}
 
+	/**
+	 * Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
+	 */
 	findPetsByTags(query?: types.PetApi.FindPetsByTagsQuery, options?: O): Promise<types.Pet[]> {
-		return this.adapter.request('get', `/pet/findByTags`, null, query, options).then(toData)
+		return this.adapter.request('get', '/pet/findByTags', null, query, options).then(toData)
 	}
 
+	/**
+	 * Returns a single pet
+	 */
 	getPetById(petId: number, options?: O): Promise<types.Pet> {
 		return this.adapter.request('get', `/pet/${petId}`, null, null, options).then(toData)
 	}
@@ -42,22 +54,37 @@ export class PetClient<O> {
 export class PetClientRaw<O> {
 	constructor(public adapter: types.IAdapter) {}
 
+	/**
+	 * Update an existing pet by Id
+	 */
 	updatePet(body: types.Pet, options?: O): Promise<types.AdapterResponse<types.Pet>> {
-		return this.adapter.request('put', `/pet`, body, null, options)
+		return this.adapter.request('put', '/pet', body, null, options)
 	}
 
+	/**
+	 * Add a new pet to the store
+	 */
 	addPet(body: types.Pet, options?: O): Promise<types.AdapterResponse<types.Pet>> {
-		return this.adapter.request('post', `/pet`, body, null, options)
+		return this.adapter.request('post', '/pet', body, null, options)
 	}
 
+	/**
+	 * Multiple status values can be provided with comma separated strings
+	 */
 	findPetsByStatus(query?: types.PetApi.FindPetsByStatusQuery, options?: O): Promise<types.AdapterResponse<types.Pet[]>> {
-		return this.adapter.request('get', `/pet/findByStatus`, null, query, options)
+		return this.adapter.request('get', '/pet/findByStatus', null, query, options)
 	}
 
+	/**
+	 * Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
+	 */
 	findPetsByTags(query?: types.PetApi.FindPetsByTagsQuery, options?: O): Promise<types.AdapterResponse<types.Pet[]>> {
-		return this.adapter.request('get', `/pet/findByTags`, null, query, options)
+		return this.adapter.request('get', '/pet/findByTags', null, query, options)
 	}
 
+	/**
+	 * Returns a single pet
+	 */
 	getPetById(petId: number, options?: O): Promise<types.AdapterResponse<types.Pet>> {
 		return this.adapter.request('get', `/pet/${petId}`, null, null, options)
 	}

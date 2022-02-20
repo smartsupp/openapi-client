@@ -1,6 +1,3 @@
-/* tslint:disable */
-/* eslint-disable */
-
 export * from './types'
 export * from './client'
 export * from './apis/pet'
