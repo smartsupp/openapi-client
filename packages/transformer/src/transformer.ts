@@ -5,6 +5,8 @@ import * as extensions from './extenstions'
 import { assignSchemaExtensionProps, isAllOfSchemaExtendable, mergeSchemas } from './helpers'
 import { X_ENUM_NAMES, X_GENERATOR_NAMESPACE, X_GENERATOR_TYPE, X_NAMESPACE } from './extenstions'
 
+const TAG_DEFAULT = 'default'
+
 export interface TransformOptions {
 	requestBodyRequiredPropsWithDefaults?: boolean
 	requestQueryRequiredPropsWithDefaults?: boolean
@@ -42,7 +44,7 @@ export class Transformer {
 			for (const method in pathItem) {
 				const operation = pathItem[method]
 				if (!operation.tags || operation.tags.length === 0) {
-					operation.tags = ['default']
+					operation.tags = [TAG_DEFAULT]
 				}
 				for (const tag of operation.tags) {
 					if (!apis[tag]) {

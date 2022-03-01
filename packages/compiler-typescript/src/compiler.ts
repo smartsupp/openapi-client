@@ -8,6 +8,7 @@ import { lcFirst, pretify } from './utils'
 
 const TEMPLATES_DIR = __dirname + '/../templates'
 const DEFAULT_TS_TARGET = 'es2017'
+const DEFAULT_API_NAME = 'default'
 
 export interface CompilerOptions {
 	npmName?: string
@@ -49,7 +50,7 @@ export class Compiler {
 			data: this.compileTypes(data, options),
 		})
 		for (const api of data.apis) {
-			if (api.name.toLowerCase() !== 'default') {
+			if (api.name.toLowerCase() !== DEFAULT_API_NAME) {
 				result.push({
 					path: `src/apis/${lcFirst(api.name)}.ts`,
 					data: this.compileApi(data, api),
@@ -108,10 +109,10 @@ export class Compiler {
 			clientClassName: options.clientClass || 'Client',
 			namespace: 'DefaultApi',
 			defaultApi: data.apis.find((api: CompileData.Api) => {
-				return api.name.toLowerCase() === 'default'
+				return api.name.toLowerCase() === DEFAULT_API_NAME
 			}),
 			apis: data.apis.filter((api: CompileData.Api) => {
-				return api.name.toLowerCase() !== 'default'
+				return api.name.toLowerCase() !== DEFAULT_API_NAME
 			}).map((api: CompileData.Api) => ({
 				name: lcFirst(api.name),
 				className: pascalCase(api.name) + 'Client',
@@ -124,7 +125,7 @@ export class Compiler {
 		return renderTemplate(this.getTemplate('index'), {
 			clientClassName: options.clientClass || 'Client',
 			apis: data.apis.filter((api: CompileData.Api) => {
-				return api.name.toLowerCase() !== 'default'
+				return api.name.toLowerCase() !== DEFAULT_API_NAME
 			}).map((api: CompileData.Api) => ({
 				name: lcFirst(api.name),
 				className: pascalCase(api.name) + 'Client',
