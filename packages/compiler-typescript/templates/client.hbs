@@ -1,4 +1,4 @@
-import { IAdapter } from './types'
+import * as types from './types'
 {{#each apis as |api|}}
 import { {{api.className}} } from './apis/{{api.name}}'
 {{/each}}
@@ -15,7 +15,11 @@ export class {{clientClassName}}<O = any> {
 	{{client.name}}: {{client.className}}<O>
 	{{/each}}
 
-	constructor(public adapter: IAdapter) {
+	{{#if defaultApi}}
+	raw: {{clientClassName}}Raw<O>
+	{{/if}}
+
+	constructor(public adapter: types.IAdapter) {
 		{{#each apis as |api|}}
 		this.{{api.name}} = new {{api.className}}(adapter)
 		{{/each}}
@@ -23,11 +27,59 @@ export class {{clientClassName}}<O = any> {
 		{{#each clients as |client|}}
 		this.{{client.name}} = new {{client.className}}(adapter)
 		{{/each}}
+
+		{{#if defaultApi}}
+		this.raw = new {{clientClassName}}Raw(adapter)
+		{{/if}}
 	}
 
 	withOptions(o: O): {{clientClassName}} {
 		return new {{clientClassName}}(this.adapter.withOptions(o))
 	}
+
+	{{#if defaultApi}}
+	{{#each defaultApi.operations as |op|}}{{'\n'}}
+	{{#ifCond op.description '||' op.deprecated}}
+	/**
+	 * {{#if op.deprecated}}@deprecated {{/if}}{{op.description}}
+	 */
+	{{/ifCond}}
+	{{#camelCase}}{{op.name}}{{/camelCase}}({{#opParams op}}{{/opParams}}): Promise<{{#opResponse op}}{{/opResponse}}> {
+		return this.adapter.request({{#opArgs op}}{{/opArgs}}).then(toData)
+		{{#if op.response}}{{#unless op.response.required}}.catch((err) => {
+			if (err.response?.status === 404) {
+				return null
+			} else {
+				throw err
+			}
+		}){{/unless}}{{/if}}
+	}
+	{{/each}}
+	{{/if}}
 }
 
+{{#if defaultApi}}
+class {{clientClassName}}Raw<O> {
+	constructor(public adapter: types.IAdapter) {}
+	{{#each defaultApi.operations as |op|}}{{'\n'}}
+	{{#ifCond op.description '||' op.deprecated}}
+	/**
+	 * {{#if op.deprecated}}@deprecated {{/if}}{{op.description}}
+	 */
+	{{/ifCond}}
+	{{#camelCase}}{{op.name}}{{/camelCase}}({{#opParams op}}{{/opParams}}): Promise<types.AdapterResponse<{{#opResponseRaw op}}{{/opResponseRaw}}>> {
+		return this.adapter.request({{#opArgs op}}{{/opArgs}})
+	}
+	{{/each}}
+}
+{{/if}}
+
 export default {{clientClassName}}
+
+{{#if defaultApi}}
+// helpers
+
+function toData(res) {
+	return res.data
+}
+{{/if}}
