@@ -41,6 +41,9 @@ export class Transformer {
 			const pathItem = spec.paths[path]
 			for (const method in pathItem) {
 				const operation = pathItem[method]
+				if (!operation.tags || operation.tags.length === 0) {
+					operation.tags = ['default']
+				}
 				for (const tag of operation.tags) {
 					if (!apis[tag]) {
 						apis[tag] = []

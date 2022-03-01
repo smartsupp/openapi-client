@@ -49,10 +49,12 @@ export class Compiler {
 			data: this.compileTypes(data, options),
 		})
 		for (const api of data.apis) {
-			result.push({
-				path: `src/apis/${lcFirst(api.name)}.ts`,
-				data: this.compileApi(data, api),
-			})
+			if (api.name.toLowerCase() !== 'default') {
+				result.push({
+					path: `src/apis/${lcFirst(api.name)}.ts`,
+					data: this.compileApi(data, api),
+				})
+			}
 		}
 		result.push({
 			path: 'src/client.ts',
@@ -104,7 +106,13 @@ export class Compiler {
 	compileClient(data: CompileData.Data, options: CompilerOptions = {}): string {
 		return renderTemplate(this.getTemplate('client'), {
 			clientClassName: options.clientClass || 'Client',
-			apis: data.apis.map((api: CompileData.Api) => ({
+			namespace: 'DefaultApi',
+			defaultApi: data.apis.find((api: CompileData.Api) => {
+				return api.name.toLowerCase() === 'default'
+			}),
+			apis: data.apis.filter((api: CompileData.Api) => {
+				return api.name.toLowerCase() !== 'default'
+			}).map((api: CompileData.Api) => ({
 				name: lcFirst(api.name),
 				className: pascalCase(api.name) + 'Client',
 			})),
@@ -115,7 +123,9 @@ export class Compiler {
 	compileIndex(data: CompileData.Data, options: CompilerOptions = {}): string {
 		return renderTemplate(this.getTemplate('index'), {
 			clientClassName: options.clientClass || 'Client',
-			apis: data.apis.map((api: CompileData.Api) => ({
+			apis: data.apis.filter((api: CompileData.Api) => {
+				return api.name.toLowerCase() !== 'default'
+			}).map((api: CompileData.Api) => ({
 				name: lcFirst(api.name),
 				className: pascalCase(api.name) + 'Client',
 			})),
