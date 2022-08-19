@@ -110,13 +110,14 @@ export class Transformer {
 	}
 
 	transformOperationParams(parameters: OpenAPIV3.ParameterObject[], definitions: CompileData.Definition[]): CompileData.OperationParam[] {
-		const result = []
+		const result: CompileData.OperationParam[] = []
 		for (const param of parameters) {
 			if (param.in === 'path') {
 				result.push({
 					name: param.name,
 					type: this.transformType(param.schema, 'Param', definitions),
 					description: param.description || null,
+					isArray: param.explode || false,
 				})
 			}
 		}

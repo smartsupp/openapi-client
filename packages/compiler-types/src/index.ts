@@ -67,6 +67,7 @@ export namespace CompileData {
 	export interface OperationParam {
 		name: string
 		type: string | string[]
+		isArray?: boolean
 		description?: string
 	}
 

@@ -90,7 +90,7 @@ export default {
 	},
 
 	opArgs: (context: CompileData.Operation) => {
-		return [
+		let ret = [
 			`'${context.method}'`,
 			context.params.length > 0
 				? `\`${context.path.replace(/{/g, '${')}\``
@@ -99,6 +99,12 @@ export default {
 			context.query ? 'query' : 'null',
 			'options',
 		].join(', ')
+		for (const param of context.params) {
+			if (param.isArray) {
+				ret = ret.replace(new RegExp(`\{(${param.name})\}`), '{$1.join(\',\')}')
+			}
+		}
+		return ret
 	},
 
 	opResponse: (context: CompileData.Operation, options) => {
