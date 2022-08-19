@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.7.0](https://github.com/smartsupp/openapi-client/compare/@openapi-client/transformer@0.6.0...@openapi-client/transformer@0.7.0) (2022-08-19)
+
+
+### Features
+
+* add support for join array params ([7759b63](https://github.com/smartsupp/openapi-client/commit/7759b63e74f02188941c982ff2d866969d63ae28))
+
+
+
+
+
 # [0.6.0](https://github.com/smartsupp/openapi-client/compare/@openapi-client/transformer@0.5.1...@openapi-client/transformer@0.6.0) (2022-03-01)
 
 

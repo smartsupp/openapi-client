@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.7.0](https://github.com/smartsupp/openapi-client/compare/@openapi-client/generator@0.6.3...@openapi-client/generator@0.7.0) (2022-08-19)
+
+
+### Features
+
+* add support for join array params ([7759b63](https://github.com/smartsupp/openapi-client/commit/7759b63e74f02188941c982ff2d866969d63ae28))
+
+
+
+
+
 ## [0.6.3](https://github.com/smartsupp/openapi-client/compare/@openapi-client/generator@0.6.2...@openapi-client/generator@0.6.3) (2022-03-01)
 
 **Note:** Version bump only for package @openapi-client/generator
