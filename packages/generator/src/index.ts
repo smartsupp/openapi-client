@@ -1,7 +1,6 @@
 import { CompiledFile, CompileData } from '@openapi-client/compiler-types'
 import { transform } from '@openapi-client/transformer'
 import { TransformOptions } from '@openapi-client/transformer'
-import del from 'del'
 import fs from 'fs'
 import isInstalled from 'is-module-installed'
 import { OpenAPIV3 } from 'openapi-types'
@@ -19,7 +18,7 @@ export interface TargetOptions {
 
 export function generateClients(spec: OpenAPIV3.Document, targets: TargetOptions[]): CompiledFile[][] {
 	return targets.map((target) => {
-		del.sync([target.outDir + '/**'])
+		fs.rmSync(target.outDir, { recursive: true, force: true })
 		const compileData = transform(spec, target.transformOptions)
 		return writeCompiledData(compileData, target)
 	})
@@ -27,7 +26,7 @@ export function generateClients(spec: OpenAPIV3.Document, targets: TargetOptions
 
 export function generateMultiClients(specs: { [key: string]: OpenAPIV3.Document }, targets: TargetOptions[]) {
 	return targets.map((target) => {
-		del.sync([target.outDir + '/**'])
+		fs.rmSync(target.outDir, { recursive: true, force: true })
 
 		const mergedCompileData: CompileData.Data = Object.entries(specs).reduce((acc: CompileData.Data, [version, spec]: [string, OpenAPIV3.Document]) => {
 			const compileData = transform(spec, {...target.transformOptions, pathPrefix: `/${version}`})
