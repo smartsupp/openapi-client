@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.10.1](https://github.com/smartsupp/openapi-client/compare/@openapi-client/compiler-typescript@0.10.0...@openapi-client/compiler-typescript@0.10.1) (2022-09-01)
+
+**Note:** Version bump only for package @openapi-client/compiler-typescript
+
+
+
+
+
 # [0.10.0](https://github.com/smartsupp/openapi-client/compare/@openapi-client/compiler-typescript@0.9.0...@openapi-client/compiler-typescript@0.10.0) (2022-08-19)
 
 

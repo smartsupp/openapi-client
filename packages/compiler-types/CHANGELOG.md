@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0](https://github.com/smartsupp/openapi-client/compare/@openapi-client/compiler-types@0.3.0...@openapi-client/compiler-types@0.4.0) (2022-09-01)
+
+
+### chore
+
+* update dependencies ([#17](https://github.com/smartsupp/openapi-client/issues/17)) ([9373b3e](https://github.com/smartsupp/openapi-client/commit/9373b3e39d8e91582c62c108b4b5d0ce428e2603))
+
+
+### BREAKING CHANGES
+
+* openapi-types bumped to ^12
+
+
+
+
+
 # [0.3.0](https://github.com/smartsupp/openapi-client/compare/@openapi-client/compiler-types@0.2.0...@openapi-client/compiler-types@0.3.0) (2022-08-19)
 
 
