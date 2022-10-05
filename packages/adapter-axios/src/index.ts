@@ -1,26 +1,24 @@
-import type { IAdapter, AdapterResponse, AdapterError, AdapterOptions } from '@openapi-client/adapter-types'
+import type { IAdapter, AdapterResponse, AdapterError } from '@openapi-client/adapter-types'
 import { AxiosInstance, AxiosRequestConfig, Method } from 'axios'
 
-export interface AxiosAdapterOptions extends AdapterOptions, AxiosRequestConfig {}
-
-export class AxiosAdapter implements IAdapter {
+export class AxiosAdapter implements IAdapter<AxiosRequestConfig> {
 	constructor(
 		public axios: AxiosInstance,
-		public options: AxiosAdapterOptions = {},
+		public options: AxiosRequestConfig = {},
 	) {
 	}
 
-	withOptions(options: AxiosAdapterOptions): AxiosAdapter {
+	withOptions(options: AxiosRequestConfig): AxiosAdapter {
 		return new AxiosAdapter(this.axios, this.createOptions(options))
 	}
 
-	createOptions(options: AxiosAdapterOptions): AxiosAdapterOptions {
+	createOptions(options: AxiosRequestConfig): AxiosRequestConfig {
 		return Object.assign({}, this.options, options, {
 			headers: Object.assign({}, this.options.headers || {}, options.headers || {}),
 		})
 	}
 
-	async request<T = any>(method: string, path: string, body: unknown, query: Record<string, string>, options: AxiosAdapterOptions): Promise<AdapterResponse<T>> {
+	async request<T = any>(method: string, path: string, body: unknown, query: Record<string, string>, options: AxiosRequestConfig): Promise<AdapterResponse<T>> {
 		try {
 			return await this.axios.request({
 				method: method as Method,

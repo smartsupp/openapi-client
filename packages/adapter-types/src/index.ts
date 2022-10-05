@@ -1,6 +1,6 @@
-export interface IAdapter {
-	request<T = unknown>(method: string, path: string, body?: unknown, query?: Record<string, string>, options?: AdapterOptions): Promise<AdapterResponse<T>>
-	withOptions(options: AdapterOptions): IAdapter
+export interface IAdapter<TOptions> {
+	request<ResponseData = unknown>(method: string, path: string, body?: unknown, query?: Record<string, string>, options?: TOptions): Promise<AdapterResponse<ResponseData>>
+	withOptions(options: TOptions): IAdapter<TOptions>
 }
 
 export interface AdapterResponse<T> {
@@ -16,7 +16,3 @@ export interface AdapterError<T> {
 	isOpenApiError: boolean
 }
 
-export interface AdapterOptions{
-	[key: string]: unknown
-	baseURL?: string
-}
