@@ -1,5 +1,6 @@
 import type { IAdapter, AdapterResponse, AdapterError } from '@openapi-client/adapter-types'
 import { AxiosInstance, AxiosRequestConfig, Method } from 'axios'
+import { ParsedUrlQueryInput } from 'querystring'
 
 export class AxiosAdapter implements IAdapter<AxiosRequestConfig> {
 	constructor(
@@ -18,7 +19,7 @@ export class AxiosAdapter implements IAdapter<AxiosRequestConfig> {
 		})
 	}
 
-	async request<T = any>(method: string, path: string, body: unknown, query: Record<string, string>, options: AxiosRequestConfig): Promise<AdapterResponse<T>> {
+	async request<T = any>(method: string, path: string, body: unknown, query: ParsedUrlQueryInput, options: AxiosRequestConfig): Promise<AdapterResponse<T>> {
 		try {
 			return await this.axios.request({
 				method: method as Method,

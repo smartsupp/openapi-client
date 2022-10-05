@@ -1,4 +1,5 @@
 import type { IAdapter, AdapterResponse, AdapterError } from '@openapi-client/adapter-types'
+import qs, { ParsedUrlQueryInput } from 'querystring'
 
 interface FetchOptions extends RequestInit {
 	baseURL?: string
@@ -11,10 +12,10 @@ export class FetchAdapter implements IAdapter<FetchOptions> {
 		this.options = options
 	}
 
-	async request<T = unknown>(method: string, path: string, body: unknown, query: Record<string, string>, options: FetchOptions): Promise<AdapterResponse<T>> {
+	async request<T = unknown>(method: string, path: string, body: unknown, query: ParsedUrlQueryInput, options: FetchOptions): Promise<AdapterResponse<T>> {
 		const mergeOptions = { ...this.options, ...options }
 		const queryString = query
-			? '?' + Object.entries(query).map(([key, value]) => `${key}=${value}`).join('&')
+			? '?' + qs.stringify(query)
 			: ''
 
 		try {
