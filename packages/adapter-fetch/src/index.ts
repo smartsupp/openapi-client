@@ -16,7 +16,7 @@ export class FetchAdapter implements IAdapter {
 		try {
 			const response = await fetch(`${mergeOptions.baseURL || ''}${path}${queryString}`, {
 				method,
-				body: JSON.stringify(body),
+				body: body ? JSON.stringify(body) : undefined,
 				...mergeOptions,
 			})
 			return {
