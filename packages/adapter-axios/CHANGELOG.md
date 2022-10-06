@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.1](https://github.com/smartsupp/openapi-client/compare/@openapi-client/adapter-axios@0.4.0...@openapi-client/adapter-axios@0.4.1) (2022-10-06)
+
+
+### Bug Fixes
+
+* **adapter-axios:** add missing dependency ([b5b66f7](https://github.com/smartsupp/openapi-client/commit/b5b66f7523dc348abec738c61667544ca2af80ec))
+
+
+
+
+
 # [0.4.0](https://github.com/smartsupp/openapi-client/compare/@openapi-client/adapter-axios@0.3.0...@openapi-client/adapter-axios@0.4.0) (2022-10-06)
 
 
