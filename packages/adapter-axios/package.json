@@ -14,8 +14,10 @@
   "peerDependencies": {
     "axios": "*"
   },
+  "dependencies": {
+    "@openapi-client/adapter-types": "^0.2.0"
+  },
   "devDependencies": {
-    "@openapi-client/adapter-types": "^0.2.0",
     "axios": "^0.27.2"
   },
   "scripts": {
