@@ -5,9 +5,11 @@
   "scripts": {
     "bootstrap": "lerna bootstrap --no-ci",
     "changed": "lerna changed --all --long",
+    "preversion": "npm run clean:locks",
     "version": "lerna version --conventional-commits",
     "publish": "lerna publish from-package --yes",
     "clean": "lerna run clean",
+    "clean:locks": "rimraf ./packages/**/package-lock.json",
     "clean:npm": "rimraf './packages/*/package-lock.json' && rimraf './packages/*/node_modules' && rimraf './package-lock.json' && rimraf './node_modules'",
     "lint": "lerna run lint && npm run lint:markdown",
     "lint:markdown": "markdownlint README.md 'packages/*/README.md'",
