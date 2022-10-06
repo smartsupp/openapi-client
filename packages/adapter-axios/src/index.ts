@@ -1,19 +1,8 @@
-import { AxiosError, AxiosInstance, AxiosResponse, Method, AxiosRequestConfig } from 'axios'
+import type { IAdapter, AdapterResponse, AdapterError } from '@openapi-client/adapter-types'
+import { AxiosInstance, AxiosRequestConfig, Method } from 'axios'
+import { ParsedUrlQueryInput } from 'querystring'
 
-export interface AdapterResponse<T> extends AxiosResponse<T> {
-	status: number
-	statusText: string
-	data: T
-	headers: Record<string, string>
-}
-
-export interface AdapterError<T> extends AxiosError<T> {
-	code?: string
-	response?: AdapterResponse<T>
-	isOpenApiError: boolean
-}
-
-export class AxiosAdapter {
+export class AxiosAdapter implements IAdapter<AxiosRequestConfig> {
 	constructor(
 		public axios: AxiosInstance,
 		public options: AxiosRequestConfig = {},
@@ -30,7 +19,7 @@ export class AxiosAdapter {
 		})
 	}
 
-	async request<T = any>(method: string, path: string, body?: any, query?: any, options?: AxiosRequestConfig): Promise<AdapterResponse<T>> {
+	async request<T = any>(method: string, path: string, body: unknown, query: ParsedUrlQueryInput, options: AxiosRequestConfig): Promise<AdapterResponse<T>> {
 		try {
 			return await this.axios.request({
 				method: method as Method,

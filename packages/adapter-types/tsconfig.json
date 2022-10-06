@@ -5,11 +5,6 @@
     "rootDir": "./src",
     "outDir": "./dist"
   },
-  "references": [
-    {
-      "path": "../adapter-types/tsconfig.json"
-    }
-  ],
   "include": [
     "src/*"
   ]
