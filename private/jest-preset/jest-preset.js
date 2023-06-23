@@ -1,7 +1,6 @@
 module.exports = {
 	preset: 'ts-jest',
 	restoreMocks: true,
-	timeout: 15000,
 	roots: [
 		'<rootDir>',
 	],
@@ -24,15 +23,6 @@ module.exports = {
 	testPathIgnorePatterns: [
 		'<rootDir>/node_modules',
 		'<rootDir>/src',
-		'<rootDir>/lib',
-	],
-	coverageReporters: [
-		'text',
-		'html',
-		'text-summary',
-	],
-	coveragePathIgnorePatterns: [
-		'<rootDir>/node_modules',
-		'<rootDir>/test',
+		'<rootDir>/build',
 	],
 }
