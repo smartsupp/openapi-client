@@ -2,59 +2,62 @@
   "name": "@openapi-client/monorepo",
   "private": true,
   "version": "0.0.0",
+  "workspaces": [
+    "packages/*",
+    "private/*"
+  ],
   "scripts": {
-    "bootstrap": "lerna bootstrap --no-ci",
+    "postinstall": "husky install",
     "changed": "lerna changed --all --long",
-    "preversion": "npm run clean:locks",
-    "version": "lerna version --conventional-commits",
-    "publish": "lerna publish from-package --yes",
-    "clean": "lerna run clean",
-    "clean:locks": "rimraf ./packages/**/package-lock.json",
-    "clean:npm": "rimraf './packages/*/package-lock.json' && rimraf './packages/*/node_modules' && rimraf './package-lock.json' && rimraf './node_modules'",
-    "lint": "lerna run lint && npm run lint:markdown",
-    "lint:markdown": "markdownlint README.md 'packages/*/README.md'",
-    "fix": "lerna run fix && npm run fix:markdown",
+    "version": "lerna version",
+    "publish": " npm run build && lerna publish from-package --yes || exit 0",
+    "clean": "tsc -b --clean packages",
+    "clean:node": "rimraf ./packages/**/node_modules ./packages/**/package-lock.json",
+    "lint": "run-p lint:eslint lint:markdown",
+    "lint:eslint": "eslint . --cache --cache-location ./.cache/.eslint --ext js,cjs,ts,tsx",
+    "lint:markdown": "markdownlint 'packages/*/README.md'",
+    "fix": "run-p fix:eslint fix:markdown",
+    "fix:eslint": "npm run lint:eslint -- --fix",
     "fix:markdown": "npm run lint:markdown -- --fix",
     "test": "lerna run test",
-    "test:debug": "TEST_DEBUG=1 npm run test",
-    "build": "lerna run build",
-    "build:watch": "lerna run build:watch --stream --no-sort --concurrency 9999",
-    "outdated": "lerna exec --no-bail --no-prefix -- npm outdated",
-    "postinstall": "husky install && npm run bootstrap"
-  },
-  "engines": {
-    "node": "~16.13.0",
-    "npm": "~8.1.0"
+    "build": "npm run clean && tsc -b packages",
+    "watch": "tsc -b packages --watch"
   },
   "devDependencies": {
-    "@commitlint/cli": "^17.1.2",
-    "@commitlint/config-conventional": "^17.1.0",
-    "@commitlint/config-lerna-scopes": "^17.0.2",
-    "@types/jest": "^28.1.8",
-    "@types/node": "^14.14.16",
-    "@typescript-eslint/eslint-plugin": "^5.36.1",
-    "@typescript-eslint/parser": "^5.36.1",
-    "eslint": "^8.23.0",
-    "eslint-plugin-jest": "^27.0.1",
-    "eslint-plugin-promise": "^6.0.1",
-    "eslint-plugin-unicorn": "^43.0.2",
-    "husky": "^8.0.1",
-    "jest": "^28.1.3",
-    "koa": "^2.13.0",
-    "lerna": "^5.5.0",
-    "lint-staged": "^13.0.3",
-    "markdownlint-cli": "^0.32.2",
+    "@commitlint/cli": "^17.6.5",
+    "@commitlint/config-conventional": "^17.6.5",
+    "@commitlint/config-lerna-scopes": "^17.6.3",
+    "@lerna-lite/changed": "^2.4.2",
+    "@lerna-lite/cli": "^2.4.2",
+    "@lerna-lite/exec": "^2.4.2",
+    "@lerna-lite/publish": "^2.4.3",
+    "@lerna-lite/run": "^2.4.2",
+    "@lerna-lite/version": "^2.4.2",
+    "@types/jest": "^29.5.2",
+    "@types/node": "^20.3.1",
+    "@typescript-eslint/eslint-plugin": "^5.60.0",
+    "@typescript-eslint/parser": "^5.60.0",
+    "eslint": "^8.43.0",
+    "eslint-plugin-jest": "^27.2.2",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-unicorn": "^47.0.0",
+    "husky": "^8.0.3",
+    "jest": "^29.5.0",
+    "lint-staged": "^13.2.2",
+    "markdownlint-cli": "^0.35.0",
     "npm-run-all": "^4.1.5",
-    "rimraf": "^3.0.2",
-    "ts-jest": "^28.0.8",
-    "typescript": "^4.5.5"
+    "rimraf": "^5.0.1",
+    "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5"
   },
   "lint-staged": {
-    "packages/**/*.ts": [
-      "eslint --fix"
-    ],
-    "packages/**/README.md": [
-      "markdownlint --fix"
-    ]
-  }
+    "packages/**/*.ts": "eslint --fix",
+    "packages/**/README.md": "markdownlint --fix"
+  },
+  "engines": {
+    "node": "~18.13.0",
+    "npm": "~8.19.3"
+  },
+  "packageManager": "npm@8.19.3"
 }

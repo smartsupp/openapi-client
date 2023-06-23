@@ -1,13 +1,14 @@
 {
   "name": "@openapi-client/generator",
   "version": "0.8.1",
-  "description": "Generate clients",
-  "repository": "https://github.com/smartsupp/openapi-client.git",
-  "homepage": "https://github.com/smartsupp/openapi-client/tree/master/packages/generator",
-  "author": "Smartsupp",
   "license": "MIT",
-  "main": "./dist/index.js",
-  "typings": "./dist/index.d.ts",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/smartsupp/openapi-client.git",
+    "directory": "packages/generator"
+  },
   "publishConfig": {
     "access": "public"
   },
@@ -21,14 +22,9 @@
     "@openapi-client/compiler-typescript": "^0.10.2"
   },
   "scripts": {
-    "clean": "../../node_modules/.bin/rimraf dist tsconfig.tsbuildinfo test/out",
-    "build": "../../node_modules/.bin/run-s clean build:ts",
-    "build:ts": "../../node_modules/.bin/tsc -b tsconfig.json",
-    "build:watch": "../../node_modules/.bin/tsc -p tsconfig.json -w",
-    "lint": "../../node_modules/.bin/eslint ./src/**/*.ts",
-    "fix": "../../node_modules/.bin/eslint --fix ./src/**/*.ts",
-    "test": "../../node_modules/.bin/jest",
-    "test:watch": "../../node_modules/.bin/jest --watch",
-    "prepublishOnly": "npm run build"
+    "test": "jest"
+  },
+  "jest": {
+    "preset": "@private/jest-preset"
   }
 }

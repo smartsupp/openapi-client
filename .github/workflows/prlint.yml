@@ -11,10 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - name: cleanup
+        run: rm .npmrc
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
           cache: 'npm'
-      - name: Install Dependencies
+      - name: install
         run: npm install --no-package-lock --no-save @commitlint/config-conventional @commitlint/config-lerna-scopes lerna
       - uses: JulienKode/pull-request-name-linter-action@v0.2.0

@@ -3,20 +3,20 @@
   "compilerOptions": {
     "composite": true,
     "rootDir": "./src",
-    "outDir": "./dist"
+    "outDir": "./build"
   },
   "references": [
     {
-      "path": "../compiler-types/tsconfig.json"
+      "path": "../compiler-types"
     },
     {
-      "path": "../compiler-typescript/tsconfig.json"
+      "path": "../compiler-typescript"
     },
     {
-      "path": "../transformer/tsconfig.json"
+      "path": "../transformer"
     }
   ],
   "include": [
-    "src/**/*"
+    "src"
   ]
 }

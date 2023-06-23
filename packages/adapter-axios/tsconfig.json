@@ -3,14 +3,14 @@
   "compilerOptions": {
     "composite": true,
     "rootDir": "./src",
-    "outDir": "./dist"
+    "outDir": "./build"
   },
   "references": [
     {
-      "path": "../adapter-types/tsconfig.json"
+      "path": "../adapter-types"
     }
   ],
   "include": [
-    "src/*"
+    "src"
   ]
 }

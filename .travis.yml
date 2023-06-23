@@ -1,7 +1,9 @@
+os: linux
+dist: focal
 language: node_js
 
 node_js:
-  - 16.13
+  - 18.13.0
 
 script:
   - npm run lint

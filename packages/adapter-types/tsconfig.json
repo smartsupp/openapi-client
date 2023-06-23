@@ -3,9 +3,9 @@
   "compilerOptions": {
     "composite": true,
     "rootDir": "./src",
-    "outDir": "./dist"
+    "outDir": "./build"
   },
   "include": [
-    "src/*"
+    "src"
   ]
 }

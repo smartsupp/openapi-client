@@ -8,12 +8,12 @@
   {{#if author}}"author": "{{author}}",{{/if}}
   {{#if publishConfig}}"publishConfig": {{#json publishConfig}}{{/json}},{{/if}}
   "main": "./dist/index.js",
-  "typings": "./dist/index.d.ts",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
-	"typescript": "^4.1.3"
+    "typescript": "^4.9.5"
   }
 }

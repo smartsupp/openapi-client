@@ -3,6 +3,9 @@ import { Compiler, CompilerOptions } from './compiler'
 
 export * from './compiler'
 
-export function compile(data: CompileData.Data, options: CompilerOptions): CompiledFile[] {
+export function compile(
+	data: CompileData.Data,
+	options: CompilerOptions,
+): CompiledFile[] {
 	return new Compiler().compile(data, options)
 }

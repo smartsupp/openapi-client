@@ -56,6 +56,5 @@ Current implementation notes:
 
 ```bash
 npm install
-npm run bootstrap
-npm run build:watch
+npm run watch
 ```

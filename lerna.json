@@ -1,24 +1,28 @@
 {
+  "$schema": "node_modules/@lerna-lite/cli/schemas/lerna-schema.json",
+  "loglevel": "verbose",
+  "version": "independent",
   "packages": [
     "packages/*"
   ],
-  "version": "independent",
   "command": {
-    "bootstrap": {
-      "npmClientArgs": ["--no-package-lock"]
-    },
     "version": {
       "allowBranch": ["master"],
-      "message": "chore(release): publish"
+      "message": "chore(release): publish",
+      "private": false,
+      "conventionalCommits": true,
+      "syncWorkspaceLock": true
     },
     "publish": {
-      "allowBranch": ["master"]
+      "allowBranch": ["master"],
+      "private": false,
+      "removePackageFields": ["devDependencies", "scripts"]
     }
   },
   "ignoreChanges": [
     "**/test/**",
-    "**/*.js",
     "**/*.md",
+    "**/jest.config.js",
     "**/package-lock.json"
   ]
 }
