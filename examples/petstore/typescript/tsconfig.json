@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es2017",
+    "target": "es2021",
     "module": "commonjs",
     "moduleResolution": "node",
     "declaration": true,
     "inlineSourceMap": true,
-    "outDir": "./dist"
+    "skipLibCheck": true,
+    "outDir": "./build"
   },
   "exclude": [
     "dist",

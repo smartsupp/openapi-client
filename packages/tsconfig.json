@@ -1,0 +1,26 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./adapter-axios"
+    },
+    {
+      "path": "./adapter-fetch"
+    },
+    {
+      "path": "./adapter-types"
+    },
+    {
+      "path": "./compiler-types"
+    },
+    {
+      "path": "./compiler-typescript"
+    },
+    {
+      "path": "./generator"
+    },
+    {
+      "path": "./transformer"
+    }
+  ]
+}

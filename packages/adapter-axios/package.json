@@ -1,15 +1,13 @@
 {
   "name": "@openapi-client/adapter-axios",
   "version": "0.4.1",
-  "description": "Axios adapter",
-  "repository": "https://github.com/smartsupp/openapi-client.git",
-  "homepage": "https://github.com/smartsupp/openapi-client/tree/master/packages/adapter-axios",
-  "author": "Smartsupp",
   "license": "MIT",
-  "main": "./dist/index.js",
-  "typings": "./dist/index.d.ts",
-  "publishConfig": {
-    "access": "public"
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/smartsupp/openapi-client.git",
+    "directory": "packages/adapter-axios"
   },
   "peerDependencies": {
     "axios": "*"
@@ -18,16 +16,6 @@
     "@openapi-client/adapter-types": "^0.2.0"
   },
   "devDependencies": {
-    "axios": "^0.27.2"
-  },
-  "scripts": {
-    "clean": "../../node_modules/.bin/rimraf dist tsconfig.tsbuildinfo",
-    "build": "../../node_modules/.bin/run-s clean build:ts",
-    "build:ts": "../../node_modules/.bin/tsc -b tsconfig.json",
-    "build:watch": "../../node_modules/.bin/tsc -p tsconfig.json -w",
-    "lint": "../../node_modules/.bin/eslint ./src/**/*.ts",
-    "fix": "../../node_modules/.bin/eslint --fix ./src/**/*.ts",
-    "test:watch": "../../node_modules/.bin/jest --watch",
-    "prepublishOnly": "npm run build"
+    "axios": "^1.4.0"
   }
 }

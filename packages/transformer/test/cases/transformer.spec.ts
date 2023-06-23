@@ -16,5 +16,6 @@ describe('Transformer', () => {
 })
 
 function dump(obj) {
+	// eslint-disable-next-line no-console
 	console.log(inspect(obj, false, null, true))
 }

@@ -5,10 +5,9 @@ import { pascalCase } from 'pascal-case'
 import prettier from 'prettier'
 import helpers from './helpers'
 import { lcFirst, pretify } from './utils'
+import { DEFAULT_API_NAME, DEFAULT_TS_TARGET } from './constants'
 
 const TEMPLATES_DIR = __dirname + '/../templates'
-const DEFAULT_TS_TARGET = 'es2017'
-const DEFAULT_API_NAME = 'default'
 
 export interface CompilerOptions {
 	npmName?: string

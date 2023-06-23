@@ -8,7 +8,7 @@ test('should create files', () => {
 		v2: require(`../data/${specFile}`),
 	}, [{
 		name: 'typescript',
-		outDir: __dirname + '/../out/typescript-multi',
+		outDir: __dirname + '/../build/typescript-multi',
 		compilerOptions: {
 			npmName: 'swagger-petstore-client',
 			npmAuthor: 'Swagger',

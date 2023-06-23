@@ -1,0 +1,13 @@
+!.*
+.husky/
+bin/
+
+**/coverage/**
+**/node_modules/**
+
+packages/*/build/**
+packages/*/lib/**
+packages/*/dist/**
+
+commitlint.config.js
+jest.config.js

@@ -1,13 +1,13 @@
 # dependencies
 node_modules/
 packages/*/package-lock.json
+*/package-lock.json
 
-# build and test
-packages/*/dist/
+# build, test
 coverage/
 dist/
-out/
-tsconfig.tsbuildinfo
+build/
+*.tsbuildinfo
 
 # logs
 npm-debug.log
@@ -20,4 +20,6 @@ eb-versions
 
 # misc
 .DS_Store
-.npmrc
+.env
+.eslintcache
+.cache

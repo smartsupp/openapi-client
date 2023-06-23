@@ -13,7 +13,7 @@ module.exports = {
 		"^.+\\.ts?$": "ts-jest",
 	},
 	modulePathIgnorePatterns: [
-		"out",
+		"build",
 		"dist",
 	],
 	moduleNameMapper: {

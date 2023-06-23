@@ -98,6 +98,7 @@ describe('Compiler', () => {
 			npmName: 'smartsupp-core',
 		})
 		expect(result).toHaveLength(8)
+		// eslint-disable-next-line no-console
 		process.env.TEST_DEBUG && console.log(result[0].data)
 	})
 
