@@ -13,8 +13,11 @@ module.exports = {
 	],
 	modulePathIgnorePatterns: [
 		'<rootDir>/node_modules',
-		'<rootDir>/lib',
+		'<rootDir>/build',
 	],
+	moduleNameMapper: {
+		'^@openapi-client/(.*)': '<rootDir>/../$1/src',
+	},
 	testRegex: [
 		'(/__tests__/.*|(\\.|/)(test|spec))\\.ts$',
 	],
