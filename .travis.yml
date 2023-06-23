@@ -1,7 +1,6 @@
 os: linux
 dist: focal
-language: node
-node: 18.13.0
+language: node_js
 
 node_js:
   - 18.13.0
