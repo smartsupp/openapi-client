@@ -16,7 +16,7 @@
     "publish": {
       "allowBranch": ["master"],
       "private": false,
-      "removePackageFields": ["devDependencies", "scripts"]
+      "removePackageFields": ["devDependencies", "scripts", "jest"]
     }
   },
   "ignoreChanges": [
