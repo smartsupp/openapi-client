@@ -1,6 +1,6 @@
 {
   "name": "@openapi-client/compiler-typescript",
-  "version": "0.10.2",
+  "version": "0.10.3",
   "license": "MIT",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
@@ -13,7 +13,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@openapi-client/compiler-types": "^0.4.0",
+    "@openapi-client/compiler-types": "^0.4.1",
     "camel-case": "^4.1.2",
     "handlebars": "^4.7.6",
     "pascal-case": "^3.1.2",

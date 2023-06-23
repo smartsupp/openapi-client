@@ -1,6 +1,6 @@
 {
   "name": "@openapi-client/transformer",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "license": "MIT",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
@@ -13,7 +13,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@openapi-client/compiler-types": "^0.4.0",
+    "@openapi-client/compiler-types": "^0.4.1",
     "json-schema-deref-sync": "^0.14.0",
     "json-schema-merge-allof": "^0.8.1",
     "openapi-types": "^12.0.2",

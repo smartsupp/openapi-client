@@ -1,6 +1,6 @@
 {
   "name": "@openapi-client/adapter-fetch",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "license": "MIT",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
@@ -13,6 +13,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@openapi-client/adapter-types": "^0.2.0"
+    "@openapi-client/adapter-types": "^0.2.1"
   }
 }

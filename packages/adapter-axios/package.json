@@ -1,6 +1,6 @@
 {
   "name": "@openapi-client/adapter-axios",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "license": "MIT",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
@@ -16,7 +16,7 @@
     "axios": "*"
   },
   "dependencies": {
-    "@openapi-client/adapter-types": "^0.2.0"
+    "@openapi-client/adapter-types": "^0.2.1"
   },
   "devDependencies": {
     "axios": "^1.4.0"

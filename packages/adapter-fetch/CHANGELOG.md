@@ -3,8 +3,11 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# 0.2.0 (2022-10-06)
+## [0.2.1](https://github.com/smartsupp/openapi-client/compare/@openapi-client/adapter-fetch@0.2.0...@openapi-client/adapter-fetch@0.2.1) (2023-06-23)
 
+**Note:** Version bump only for package @openapi-client/adapter-fetch
+
+# 0.2.0 (2022-10-06)
 
 ### Features
 
