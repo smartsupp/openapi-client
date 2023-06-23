@@ -8,5 +8,8 @@
     "type": "git",
     "url": "https://github.com/smartsupp/openapi-client.git",
     "directory": "packages/adapter-types"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

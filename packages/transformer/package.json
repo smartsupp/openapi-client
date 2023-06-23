@@ -9,6 +9,9 @@
     "url": "https://github.com/smartsupp/openapi-client.git",
     "directory": "packages/transformer"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@openapi-client/compiler-types": "^0.4.0",
     "json-schema-deref-sync": "^0.14.0",
