@@ -1,15 +1,3 @@
-# @openapi-client/compiler-typescript
+# @openapi-client/adapter-axios
 
-Generate typescript client
-
-## Options
-
-- `npmName` - Required.
-- `npmAuthor`
-- `npmVersion`
-- `npmLicense`
-- `npmHomepage`
-- `npmRepository`
-- `npmPublishConfig`
-- `tsTarget`
-- `clientClass`
+Client adapter for `axios`

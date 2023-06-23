@@ -1,3 +1,3 @@
 # @openapi-client/adapter-types
 
-Genereal types implemented by adapters
+General types implemented by adapters
